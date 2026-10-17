@@ -1,0 +1,27 @@
+{
+  "name": "autotrack-vehicle-tracking",
+  "version": "1.0.0",
+  "description": "Sistema de Información para Entrega de Vehículos Nuevos - AutoTrack",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test-api.js",
+    "seed": "node database/seed.js"
+  },
+  "keywords": [
+    "ux",
+    "vehicle-tracking",
+    "express",
+    "render",
+    "autotrack"
+  ],
+  "author": "AutoTrack Team",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemailer": "^10.0.15"
+  }
+}

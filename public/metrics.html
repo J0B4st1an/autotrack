@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoTrack | Dashboard de Métricas UX Staff</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 text-slate-800 antialiased">
+
+  <!-- Header Protegido Aislado Staff -->
+  <header class="bg-indigo-950 text-white sticky top-0 z-40 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="/admin.html" class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold">
+            <i class="fa-solid fa-chart-pie"></i>
+          </div>
+          <span class="text-lg font-bold tracking-tight text-white">AutoTrack Métricas UX</span>
+        </a>
+      </div>
+      <div class="flex items-center space-x-3">
+        <a href="/admin.html" class="px-3 py-1.5 text-xs font-semibold bg-indigo-900 hover:bg-indigo-800 rounded-xl text-indigo-200 transition">
+          <i class="fa-solid fa-user-gear mr-1"></i> Panel Operativo Staff
+        </a>
+        <button onclick="logoutAdmin()" class="px-3 py-1.5 text-xs font-semibold bg-rose-900/60 hover:bg-rose-800 rounded-xl text-rose-200 border border-rose-800 transition">
+          <i class="fa-solid fa-right-from-bracket mr-1"></i> Salir Staff
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Title Banner -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div>
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 inline-block mb-2">
+          Análisis de Impacto UX
+        </span>
+        <h1 class="text-2xl font-black text-slate-900">Métricas de Rendimiento y Experiencia de Entrega</h1>
+        <p class="text-xs text-slate-500 mt-1">Monitoreo continuo de tiempos por etapa, cuellos de botella y satisfacción del comprador.</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="loadMetrics()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm transition flex items-center gap-2">
+          <i class="fa-solid fa-arrows-rotate"></i> Actualizar Métricas
+        </button>
+      </div>
+    </div>
+
+    <!-- KPIs Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Entrega Autos</span>
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <i class="fa-solid fa-car"></i>
+          </div>
+        </div>
+        <h3 class="text-3xl font-black text-slate-900 mt-2">14 <span class="text-sm font-normal text-slate-500">días prom.</span></h3>
+        <p class="text-[11px] text-emerald-600 mt-2 font-semibold">
+          <i class="fa-solid fa-arrow-down mr-1"></i> Reducción del 35% de incertidumbre
+        </p>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Entrega Motos</span>
+          <div class="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center">
+            <i class="fa-solid fa-motorcycle"></i>
+          </div>
+        </div>
+        <h3 class="text-3xl font-black text-slate-900 mt-2">6 <span class="text-sm font-normal text-slate-500">días prom.</span></h3>
+        <p class="text-[11px] text-emerald-600 mt-2 font-semibold">
+          <i class="fa-solid fa-circle-check mr-1"></i> Dentro del estándar 3-30 días
+        </p>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Satisfacción Cliente</span>
+          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+            <i class="fa-solid fa-star"></i>
+          </div>
+        </div>
+        <h3 id="metric-satisfaction" class="text-3xl font-black text-slate-900 mt-2">4.9 / 5.0</h3>
+        <p class="text-[11px] text-slate-400 mt-2 font-semibold">Evaluación post-entrega</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Alertas de Retraso</span>
+          <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+        </div>
+        <h3 id="metric-delayed" class="text-3xl font-black text-rose-600 mt-2">0</h3>
+        <p class="text-[11px] text-slate-400 mt-2 font-semibold">Superan tiempo estimado</p>
+      </div>
+    </div>
+
+    <!-- Stage Distribution Bar Chart Grid -->
+    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Distribución de Vehículos por Etapa de Operación</h3>
+          <p class="text-xs text-slate-500">Permite detectar cuellos de botella en alistamiento o documentación.</p>
+        </div>
+      </div>
+
+      <div id="stage-distribution-container" class="space-y-4">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Delayed Vehicles Table -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+      <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-clock text-amber-500"></i> Vehículos Requiriendo Atención Prioritaria
+      </h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+              <th class="py-3 px-4">ID</th>
+              <th class="py-3 px-4">Cliente</th>
+              <th class="py-3 px-4">Modelo</th>
+              <th class="py-3 px-4">Etapa Actual</th>
+              <th class="py-3 px-4">Días Estimados</th>
+              <th class="py-3 px-4 text-right">Estado Alerta</th>
+            </tr>
+          </thead>
+          <tbody id="delayed-table-body" class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="/js/app-metrics.js"></script>
+</body>
+</html>

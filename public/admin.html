@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoTrack | Panel de Gestión Operativa Staff</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 text-slate-800 antialiased">
+
+  <!-- Header Protegido Aislado (Sin navegación a Cliente) -->
+  <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold">
+          <i class="fa-solid fa-car-side"></i>
+        </div>
+        <div>
+          <span class="text-lg font-bold tracking-tight text-white">AutoTrack Staff</span>
+          <span class="text-[11px] text-slate-400 font-mono block">Panel Operativo</span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="/metrics.html" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 rounded-xl text-indigo-200 border border-slate-700 transition">
+          <i class="fa-solid fa-chart-pie mr-1"></i> Métricas UX
+        </a>
+
+        <div class="flex items-center space-x-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
+          <i class="fa-solid fa-user-shield text-xs text-indigo-400"></i>
+          <span id="admin-user-display" class="text-xs font-bold text-slate-200">Staff</span>
+        </div>
+
+        <button onclick="logoutAdmin()" class="px-3 py-1.5 text-xs font-semibold bg-rose-900/60 hover:bg-rose-800 rounded-xl text-rose-200 border border-rose-800 transition">
+          <i class="fa-solid fa-right-from-bracket mr-1"></i> Salir Staff
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <!-- Top Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500">Vehículos en Alistamiento</p>
+          <h3 id="stat-active" class="text-2xl font-black text-slate-900 mt-1">0</h3>
+        </div>
+        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-wrench"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500">Listos para Entrega</p>
+          <h3 id="stat-ready" class="text-2xl font-black text-emerald-600 mt-1">0</h3>
+        </div>
+        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-sparkles"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500">Cuentas Registradas</p>
+          <h3 id="stat-users" class="text-2xl font-black text-indigo-600 mt-1">0</h3>
+        </div>
+        <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-users"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500">Alertas de Retraso</p>
+          <h3 id="stat-delayed" class="text-2xl font-black text-amber-600 mt-1">0</h3>
+        </div>
+        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Banner de Éxito de Creación -->
+    <div id="creation-success-toast" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between text-emerald-800 text-xs font-semibold shadow-sm">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
+        <span id="creation-success-msg">Vehículo registrado exitosamente. Se ha enviado un correo electrónico con las credenciales de acceso al cliente.</span>
+      </div>
+      <button onclick="closeSuccessToast()" class="text-emerald-500 hover:text-emerald-700">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Controls & Filters Bar -->
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div class="relative w-full md:w-80">
+        <input 
+          type="text" 
+          id="admin-search-input" 
+          placeholder="Buscar por cliente, VIN, cédula..." 
+          class="w-full pl-10 pr-4 py-2 bg-slate-50 rounded-xl text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          onkeyup="filterVehicles()"
+        />
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+        <select id="filter-stage" onchange="filterVehicles()" class="px-3 py-2 bg-slate-50 rounded-xl text-xs font-semibold border border-slate-200">
+          <option value="">Todas las etapas (1 - 7)</option>
+          <option value="1">1. Proceso de Asignación</option>
+          <option value="2">2. En Transporte</option>
+          <option value="3">3. Vehículo Recibido</option>
+          <option value="4">4. En Alistamiento</option>
+          <option value="5">5. Documentación en Proceso</option>
+          <option value="6">6. Listo para Entrega</option>
+          <option value="7">7. Entregado</option>
+        </select>
+
+        <button onclick="openNewVehicleModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-md transition flex items-center gap-1.5">
+          <i class="fa-solid fa-user-plus"></i> Registrar Cliente y Pedido
+        </button>
+      </div>
+    </div>
+
+    <!-- Vehicles Table -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+              <th class="py-4 px-6">ID & Pedido</th>
+              <th class="py-4 px-6">Cliente & Documento</th>
+              <th class="py-4 px-6">Vehículo & VIN</th>
+              <th class="py-4 px-6">Etapa Actual (1-Click Update)</th>
+              <th class="py-4 px-6 text-right">Notificación Cliente</th>
+            </tr>
+          </thead>
+          <tbody id="vehicles-table-body" class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal: Registrar Nuevo Cliente & Pedido -->
+  <div id="new-vehicle-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-user-plus text-indigo-600"></i> Registrar Nuevo Cliente y Pedido
+        </h3>
+        <button onclick="closeNewVehicleModal()" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="create-vehicle-form" onsubmit="handleCreateVehicle(event)" class="py-4 space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Cédula Cliente *</label>
+            <input type="text" id="new-doc" required placeholder="Ej. 1098765432" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo *</label>
+            <input type="text" id="new-name" required placeholder="Ej. Juan Pérez" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Correo Electrónico (Requerido para clave) *</label>
+            <input type="email" id="new-email" required placeholder="juan.perez@email.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono / Celular</label>
+            <input type="text" id="new-phone" placeholder="+57 300 123 4567" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Tipo de Vehículo</label>
+            <select id="new-type" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+              <option value="Automóvil">Automóvil</option>
+              <option value="Motocicleta">Motocicleta</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Marca y Modelo *</label>
+            <input type="text" id="new-model" required placeholder="Ej. Nissan Kicks 2024" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+          <button type="button" onclick="closeNewVehicleModal()" class="px-4 py-2 bg-slate-100 text-slate-600 text-xs font-semibold rounded-xl hover:bg-slate-200">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl hover:bg-indigo-700 shadow-sm">
+            Guardar y Enviar Correo al Cliente
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/app-admin.js"></script>
+</body>
+</html>
