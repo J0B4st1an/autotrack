@@ -362,10 +362,11 @@ const db = {
     const data = readData();
     const users = data.users || [];
     const q = (usernameOrEmail || '').trim().toLowerCase();
+    const p = (password || '').trim();
 
     const found = users.find(u => 
       (u.username.toLowerCase() === q || u.email.toLowerCase() === q || (u.client_doc && u.client_doc.toLowerCase() === q)) &&
-      u.password === password
+      (u.password === password || u.password === p)
     );
 
     return found || null;

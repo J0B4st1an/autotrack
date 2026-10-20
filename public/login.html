@@ -10,7 +10,7 @@
 </head>
 <body class="min-h-screen flex flex-col bg-slate-900 text-slate-100 antialiased justify-between">
 
-  <!-- Header Header -->
+  <!-- Header -->
   <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
@@ -36,6 +36,12 @@
         <p class="text-[11px] text-slate-500 mt-1">Ingresa con tus credenciales asignadas.</p>
       </div>
 
+      <!-- Protocol Alert if opened as file:// -->
+      <div id="protocol-warning" class="hidden mb-3 p-2.5 bg-amber-50 border border-amber-200 text-amber-800 text-[11px] rounded-xl font-medium text-center">
+        ⚠️ Has abierto el archivo directamente. Para iniciar sesión, ingresa a través del servidor: <br>
+        <a href="http://localhost:3000/login.html" class="font-bold underline text-blue-700">http://localhost:3000/login.html</a>
+      </div>
+
       <!-- Error Alert -->
       <div id="login-error" class="hidden mb-3 p-2.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl font-medium text-center">
         <!-- Error text -->
@@ -46,7 +52,7 @@
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Usuario / Correo Electrónico</label>
           <div class="relative">
-            <input type="text" id="username-input" required placeholder="Ej. carlos.mendoza o admin" class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500">
+            <input type="text" id="username-input" required placeholder="Ej. admin o mf.rios" class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500">
             <i class="fa-solid fa-user absolute left-3 top-2.5 text-slate-400 text-xs"></i>
           </div>
         </div>
@@ -59,13 +65,37 @@
           </div>
         </div>
 
-        <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2 mt-2">
-          <span>Ingresar a la Plataforma</span>
-          <i class="fa-solid fa-right-to-bracket"></i>
+        <button type="submit" id="btn-submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2 mt-2">
+          <span id="btn-text">Ingresar a la Plataforma</span>
+          <i id="btn-icon" class="fa-solid fa-right-to-bracket"></i>
         </button>
       </form>
 
-      <div class="mt-4 text-center text-[10px] text-slate-400 border-t border-slate-100 pt-3">
+      <!-- Credenciales de prueba rápidas (Desplegable discreto) -->
+      <details class="mt-4 text-left text-xs bg-slate-50 rounded-xl border border-slate-200 p-2 text-slate-600">
+        <summary class="font-semibold cursor-pointer text-slate-500 hover:text-slate-800 flex items-center justify-between text-[11px] select-none">
+          <span>🔑 Ver credenciales de prueba</span>
+          <i class="fa-solid fa-chevron-down text-[10px]"></i>
+        </summary>
+        <div class="mt-2 space-y-1.5 text-[11px] border-t border-slate-200 pt-2">
+          <div class="flex items-center justify-between bg-white p-1.5 rounded-lg border border-slate-200/60">
+            <div>
+              <span class="font-bold text-slate-800">Admin:</span>
+              <span class="font-mono text-blue-700 ml-1">admin</span> / <span class="font-mono text-slate-600">Admin1234*</span>
+            </div>
+            <button type="button" onclick="fillCreds('admin', 'Admin1234*')" class="text-[10px] font-bold text-blue-600 hover:underline">Usar</button>
+          </div>
+          <div class="flex items-center justify-between bg-white p-1.5 rounded-lg border border-slate-200/60">
+            <div>
+              <span class="font-bold text-slate-800">Cliente:</span>
+              <span class="font-mono text-blue-700 ml-1">mf.rios</span> / <span class="font-mono text-slate-600">Clave2024</span>
+            </div>
+            <button type="button" onclick="fillCreds('mf.rios', 'Clave2024')" class="text-[10px] font-bold text-blue-600 hover:underline">Usar</button>
+          </div>
+        </div>
+      </details>
+
+      <div class="mt-3 text-center text-[10px] text-slate-400 border-t border-slate-100 pt-2.5">
         <p>Accesos gestionados por el departamento comercial.</p>
       </div>
 
@@ -77,13 +107,43 @@
   </footer>
 
   <script>
+    // Verificar si abrieron la página como file://
+    if (window.location.protocol === 'file:') {
+      const warn = document.getElementById('protocol-warning');
+      if (warn) warn.classList.remove('hidden');
+    }
+
+    function fillCreds(u, p) {
+      document.getElementById('username-input').value = u;
+      document.getElementById('password-input').value = p;
+      document.getElementById('login-error').classList.add('hidden');
+    }
+
     async function handleUnifiedLogin(e) {
       e.preventDefault();
-      const username = document.getElementById('username-input').value.trim();
-      const password = document.getElementById('password-input').value;
+      const usernameInput = document.getElementById('username-input');
+      const passwordInput = document.getElementById('password-input');
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
       const errorBox = document.getElementById('login-error');
+      const btnSubmit = document.getElementById('btn-submit');
+      const btnText = document.getElementById('btn-text');
+      const btnIcon = document.getElementById('btn-icon');
 
       errorBox.classList.add('hidden');
+      errorBox.textContent = '';
+
+      if (!username || !password) {
+        errorBox.textContent = "Por favor ingresa usuario y contraseña.";
+        errorBox.classList.remove('hidden');
+        return;
+      }
+
+      // Feedback visual de carga
+      btnSubmit.disabled = true;
+      btnSubmit.classList.add('opacity-75', 'cursor-not-allowed');
+      btnText.textContent = "Verificando...";
+      btnIcon.className = "fa-solid fa-circle-notch fa-spin";
 
       try {
         const res = await fetch('/api/auth/login', {
@@ -96,6 +156,10 @@
         if (!data.success) {
           errorBox.textContent = data.message || "Credenciales incorrectas.";
           errorBox.classList.remove('hidden');
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove('opacity-75', 'cursor-not-allowed');
+          btnText.textContent = "Ingresar a la Plataforma";
+          btnIcon.className = "fa-solid fa-right-to-bracket";
           return;
         }
 
@@ -115,8 +179,12 @@
 
       } catch (err) {
         console.error("Error en login:", err);
-        errorBox.textContent = "Error de conexión con el servidor.";
+        errorBox.textContent = "Error de conexión con el servidor. Verifica que el servidor esté activo.";
         errorBox.classList.remove('hidden');
+        btnSubmit.disabled = false;
+        btnSubmit.classList.remove('opacity-75', 'cursor-not-allowed');
+        btnText.textContent = "Ingresar a la Plataforma";
+        btnIcon.className = "fa-solid fa-right-to-bracket";
       }
     }
   </script>
