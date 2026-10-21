@@ -7,29 +7,70 @@
   <link rel="stylesheet" href="/css/styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+  <style>
+    /* Mismo lenguaje visual del login: azul noche, rejilla sutil y brillo azul */
+    body { font-family: 'Manrope', sans-serif; }
+    .at-hero {
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px),
+        #091426;
+      background-size: 56px 56px;
+    }
+    .at-glow-a { background: rgba(42,108,244,.16); }
+    .at-glow-b { background: rgba(34,198,176,.08); }
+    /* Tarjetas oscuras: adapta el contenido que dibuja app-client.js (pensado para fondo claro) */
+    .at-dark { color-scheme: dark; }
+    .at-dark .text-slate-900, .at-dark .text-slate-800, .at-dark .text-slate-700, .at-dark .text-gray-900, .at-dark .text-gray-800, .at-dark .text-gray-700 { color: #f1f5f9; }
+    .at-dark .text-slate-600, .at-dark .text-slate-500, .at-dark .text-gray-600, .at-dark .text-gray-500 { color: #94a3b8; }
+    .at-dark .text-blue-600, .at-dark .text-blue-700, .at-dark .text-blue-800 { color: #93c5fd; }
+    .at-dark .text-indigo-600, .at-dark .text-indigo-700, .at-dark .text-indigo-800 { color: #a5b4fc; }
+    .at-dark .text-emerald-600, .at-dark .text-emerald-700, .at-dark .text-emerald-800, .at-dark .text-green-600, .at-dark .text-green-700 { color: #6ee7b7; }
+    .at-dark .text-amber-600, .at-dark .text-amber-700, .at-dark .text-amber-800, .at-dark .text-orange-600 { color: #fcd34d; }
+    .at-dark .text-rose-600, .at-dark .text-rose-700, .at-dark .text-red-600, .at-dark .text-red-700 { color: #fda4af; }
+    .at-dark .bg-white, .at-dark .bg-slate-50, .at-dark .bg-slate-100, .at-dark .bg-gray-50, .at-dark .bg-gray-100 { background-color: rgba(255,255,255,.05); }
+    .at-dark .bg-slate-200, .at-dark .bg-slate-300, .at-dark .bg-gray-200, .at-dark .bg-gray-300 { background-color: rgba(255,255,255,.14); }
+    .at-dark .bg-blue-50, .at-dark .bg-blue-100 { background-color: rgba(59,130,246,.16); }
+    .at-dark .bg-indigo-50, .at-dark .bg-indigo-100 { background-color: rgba(99,102,241,.16); }
+    .at-dark .bg-emerald-50, .at-dark .bg-emerald-100, .at-dark .bg-green-50, .at-dark .bg-green-100 { background-color: rgba(16,185,129,.16); }
+    .at-dark .bg-amber-50, .at-dark .bg-amber-100, .at-dark .bg-orange-50 { background-color: rgba(245,158,11,.16); }
+    .at-dark .bg-rose-50, .at-dark .bg-rose-100, .at-dark .bg-red-50, .at-dark .bg-red-100 { background-color: rgba(244,63,94,.16); }
+    .at-dark .border-slate-100, .at-dark .border-slate-200, .at-dark .border-slate-300, .at-dark .border-gray-100, .at-dark .border-gray-200 { border-color: rgba(255,255,255,.1); }
+    .at-dark .border-blue-100, .at-dark .border-blue-200 { border-color: rgba(96,165,250,.28); }
+    .at-dark .border-emerald-100, .at-dark .border-emerald-200 { border-color: rgba(52,211,153,.28); }
+    .at-dark .border-amber-100, .at-dark .border-amber-200 { border-color: rgba(251,191,36,.28); }
+    .at-dark .border-rose-100, .at-dark .border-rose-200 { border-color: rgba(251,113,133,.28); }
+    .at-dark .divide-slate-100 > * + *, .at-dark .divide-slate-200 > * + * { border-color: rgba(255,255,255,.1); }
+    /* Cronograma: 7 mini tarjetas en el mismo lenguaje oscuro (completada / actual / pendiente) */
+    #timeline-container [class*="bg-white"], #timeline-container [class*="bg-slate-50"]:not([class*="bg-slate-500"]), #timeline-container [class*="bg-slate-100"] { background: rgba(255,255,255,.04) !important; border-color: rgba(255,255,255,.12) !important; }
+    #timeline-container [class*="bg-emerald-50"]:not([class*="bg-emerald-500"]), #timeline-container [class*="bg-emerald-100"], #timeline-container [class*="bg-green-50"]:not([class*="bg-green-500"]), #timeline-container [class*="bg-green-100"] { background: linear-gradient(160deg, rgba(16,185,129,.16), rgba(16,185,129,.05)) !important; border-color: rgba(52,211,153,.38) !important; }
+    #timeline-container [class*="bg-blue-50"]:not([class*="bg-blue-500"]), #timeline-container [class*="bg-blue-100"], #timeline-container [class*="bg-indigo-50"]:not([class*="bg-indigo-500"]), #timeline-container [class*="bg-indigo-100"] { background: linear-gradient(160deg, rgba(59,130,246,.30), rgba(59,130,246,.08)) !important; border-color: rgba(96,165,250,.65) !important; box-shadow: 0 0 0 1px rgba(96,165,250,.25), 0 12px 32px rgba(43,109,243,.25) !important; }
+    #timeline-container [class*="bg-white"] .text-slate-500, #timeline-container [class*="bg-white"] .text-slate-600 { color: #94a3b8; }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased">
+<body class="min-h-screen flex flex-col bg-[#b4c7e2] text-[#10213f] antialiased">
 
-  <!-- Header / Navbar UX (Azul Oscuro Protegido) -->
-  <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-md">
+  <!-- Header / Navbar -->
+  <header class="bg-[#091426] text-white border-b border-white/[0.07] sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a href="/index.html" class="flex items-center" aria-label="AutoTrack, ir al inicio">
           <img src="/img/logo-blanco.svg" alt="AutoTrack" class="h-9 w-auto">
         </a>
-        <span class="text-xs font-semibold px-2 py-0.5 bg-slate-800 text-blue-300 rounded-full border border-slate-700 hidden sm:inline-block">Portal Cliente</span>
+        <span class="text-[11px] font-semibold px-2.5 py-0.5 bg-white/5 text-blue-300 rounded-full border border-white/10 hidden sm:inline-block">Portal Cliente</span>
       </div>
-      
+
       <!-- User session info & Logout -->
       <div class="flex items-center space-x-3">
-        <div class="flex items-center space-x-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
-          <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold" id="user-avatar">
+        <div class="flex items-center space-x-2 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10">
+          <div class="w-7 h-7 rounded-full bg-[#2b6df3] text-white flex items-center justify-center text-xs font-bold" id="user-avatar">
             U
           </div>
           <span id="user-display-name" class="text-xs font-bold text-slate-200">Cargando...</span>
         </div>
 
-        <button onclick="logout()" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-xl text-rose-200 bg-rose-950/70 hover:bg-rose-900 border border-rose-800 transition">
+        <button onclick="logout()" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-xl text-rose-200 bg-rose-950/60 hover:bg-rose-900 border border-rose-800/70 transition">
           <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Salir
         </button>
       </div>
@@ -37,118 +78,131 @@
   </header>
 
   <main class="flex-1">
-    <!-- Welcome Title (Sección Clara y Limpia) -->
-    <section class="bg-slate-100/80 border-b border-slate-200 py-6 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-4xl mx-auto text-center">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 mb-2">
-          <i class="fa-solid fa-user-shield text-blue-600"></i> Tu Consulta Exclusiva Protegida
+    <!-- Hero de bienvenida -->
+    <section class="at-hero relative overflow-hidden text-white pt-8 pb-32 sm:pt-10 sm:pb-32 px-4 sm:px-6 lg:px-8 min-h-[300px] sm:min-h-[320px]">
+      <!-- Foto de fondo del hero (prueba). Si la dejas, descárgala a public/img/hero.jpg y usa src="/img/hero.jpg" -->
+      <img src="https://www.motosausio.com/wp-content/uploads/2024/11/2025_YAM_MT07A_EU_MLNM4_STA_002_03.jpg" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1643142314913-0cf633d9bbb5?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=88&w=1600'" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover object-[70%_center]">
+      <!-- Sombra lateral solo detrás del texto, para que la foto se vea limpia a la derecha -->
+      <div class="absolute inset-0 bg-gradient-to-r from-[#091426]/90 via-[#091426]/50 to-transparent pointer-events-none"></div>
+      <!-- Sombra inferior para unir con la tarjeta del vehículo -->
+      <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#091426]/85 to-transparent pointer-events-none"></div>
+
+      <div class="relative max-w-6xl mx-auto text-center lg:text-left">
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-[0.14em] text-blue-200 bg-white/10 border border-white/15 backdrop-blur-sm mb-4">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#6e9cff] shadow-[0_0_0_4px_rgba(110,156,255,.18)]"></span>
+          Tu consulta exclusiva protegida
         </span>
-        <h1 id="welcome-client-header" class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 mb-1">
+        <h1 id="welcome-client-header" class="max-w-xl mx-auto lg:mx-0 text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight mb-3 drop-shadow-[0_2px_12px_rgba(0,0,0,.55)]">
           Estado de Alistamiento de tu Vehículo
         </h1>
-        <p class="text-slate-600 text-xs sm:text-sm max-w-lg mx-auto">
+        <p class="max-w-md mx-auto lg:mx-0 text-slate-100/90 text-sm drop-shadow-[0_1px_8px_rgba(0,0,0,.6)]">
           Monitorea en tiempo real las 7 etapas de alistamiento de tu vehículo.
         </p>
       </div>
     </section>
 
     <!-- Results Section (Exclusivo del Cliente Autenticado) -->
-    <section id="results-section" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      
-      <!-- Vehicle Summary & Status Card -->
-      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-100">
-          
-          <div class="flex items-start space-x-4">
-            <div id="vehicle-icon-box" class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl flex-shrink-0">
-              <i class="fa-solid fa-car"></i>
-            </div>
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span id="v-type" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">Automóvil</span>
-                <span id="v-order" class="text-xs font-medium text-slate-400">PED-2024-8891</span>
-              </div>
-              <h2 id="v-title" class="text-2xl font-extrabold text-slate-900">Cargando...</h2>
-              <p class="text-xs text-slate-500 mt-1">
-                VIN: <span id="v-vin" class="font-mono text-slate-700">---</span> • Color: <span id="v-color" class="font-medium text-slate-700">---</span>
-              </p>
-            </div>
-          </div>
+    <section id="results-section" class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 pb-12 space-y-6">
 
-          <!-- Current Stage Badge Card -->
-          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center justify-between lg:justify-end gap-6">
-            <div>
-              <span class="text-xs uppercase tracking-wider font-semibold text-slate-400 block mb-0.5">Etapa Actual</span>
-              <div id="current-stage-badge" class="badge-pulse text-sm font-bold text-blue-600">
-                En Alistamiento
-              </div>
-            </div>
-            <div class="text-right">
-              <span class="text-xs uppercase tracking-wider font-semibold text-slate-400 block mb-0.5">Progreso Total</span>
-              <span id="progress-pct" class="text-xl font-black text-slate-900">0%</span>
-            </div>
-          </div>
+      <!-- Vehicle Summary & Status Card (oscura) -->
+      <div class="at-dark relative overflow-hidden bg-gradient-to-br from-[#1a202c] to-[#0b0e14] rounded-3xl border border-white/10 shadow-2xl shadow-black/40 p-6 sm:p-8 text-white">
+        <div class="pointer-events-none absolute -top-28 -right-16 w-80 h-80 rounded-full bg-[#2b6df3]/15 blur-3xl"></div>
 
-        </div>
+        <div class="relative">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
 
-        <!-- Progress Bar & Delivery Estimation Grid -->
-        <div class="mt-6">
-          <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-2">
-            <span>Avance general de alistamiento</span>
-            <span id="days-info">Calculando...</span>
-          </div>
-          <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200">
-            <div id="progress-bar-fill" class="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full transition-all duration-700 ease-out" style="width: 0%;"></div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-            <div class="p-3.5 bg-blue-50/50 rounded-2xl border border-blue-100/60 flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-base">
-                <i class="fa-regular fa-calendar-check"></i>
+            <div class="flex items-start space-x-4">
+              <div id="vehicle-icon-box" class="w-14 h-14 rounded-2xl bg-blue-500/15 text-blue-300 border border-blue-400/20 flex items-center justify-center text-2xl flex-shrink-0">
+                <i class="fa-solid fa-car"></i>
               </div>
               <div>
-                <p class="text-xs text-slate-500 font-medium">Fecha Estimada de Entrega</p>
-                <p id="v-est-date" class="text-sm font-bold text-slate-900">---</p>
+                <div class="flex items-center gap-2 mb-1">
+                  <span id="v-type" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/15 text-blue-200 border border-blue-400/20">Automóvil</span>
+                  <span id="v-order" class="text-xs font-medium text-slate-400">PED-2024-8891</span>
+                </div>
+                <h2 id="v-title" class="text-2xl font-extrabold tracking-tight text-white">Cargando...</h2>
+                <p class="text-xs text-slate-400 mt-1">
+                  VIN: <span id="v-vin" class="font-mono text-slate-200">---</span> • Color: <span id="v-color" class="font-medium text-slate-200">---</span>
+                </p>
               </div>
             </div>
 
-            <div class="p-3.5 bg-indigo-50/50 rounded-2xl border border-indigo-100/60 flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-base">
-                <i class="fa-solid fa-location-dot"></i>
-              </div>
+            <!-- Current Stage Badge Card -->
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 flex items-center justify-between lg:justify-end gap-6">
               <div>
-                <p class="text-xs text-slate-500 font-medium">Sede del Concesionario</p>
-                <p id="v-branch" class="text-sm font-bold text-slate-900">---</p>
+                <span class="text-[10px] uppercase tracking-[0.12em] font-bold text-slate-400 block mb-0.5">Etapa Actual</span>
+                <div id="current-stage-badge" class="badge-pulse text-sm font-bold text-blue-300">
+                  En Alistamiento
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] uppercase tracking-[0.12em] font-bold text-slate-400 block mb-0.5">Progreso Total</span>
+                <span id="progress-pct" class="text-2xl font-black text-white">0%</span>
               </div>
             </div>
 
-            <div class="p-3.5 bg-emerald-50/50 rounded-2xl border border-emerald-100/60 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-base">
-                  <i class="fa-solid fa-user-tie"></i>
+          </div>
+
+          <!-- Progress Bar & Delivery Estimation Grid -->
+          <div class="mt-6">
+            <div class="flex justify-between items-center text-xs font-semibold text-slate-400 mb-2">
+              <span>Avance general de alistamiento</span>
+              <span id="days-info" class="text-slate-300">Calculando...</span>
+            </div>
+            <div class="w-full h-3 bg-white/10 rounded-full overflow-hidden p-0.5 border border-white/10">
+              <div id="progress-bar-fill" class="h-full bg-gradient-to-r from-[#3375fa] to-[#6e9cff] rounded-full shadow-[0_0_14px_rgba(67,128,255,.7)] transition-all duration-700 ease-out" style="width: 0%;"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+              <div class="p-3.5 bg-white/[0.04] rounded-2xl border border-white/10 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-300 flex items-center justify-center text-base">
+                  <i class="fa-regular fa-calendar-check"></i>
                 </div>
                 <div>
-                  <p class="text-xs text-slate-500 font-medium">Asesor Asignado</p>
-                  <p id="v-advisor" class="text-sm font-bold text-slate-900">---</p>
+                  <p class="text-xs text-slate-400 font-medium">Fecha Estimada de Entrega</p>
+                  <p id="v-est-date" class="text-sm font-bold text-white">---</p>
                 </div>
               </div>
-              <a id="whatsapp-btn" href="#" target="_blank" class="w-9 h-9 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl flex items-center justify-center shadow-md transition" title="Hablar por WhatsApp">
-                <i class="fa-brands fa-whatsapp text-lg"></i>
-              </a>
-            </div>
-          </div>
 
+              <div class="p-3.5 bg-white/[0.04] rounded-2xl border border-white/10 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/15 text-indigo-300 flex items-center justify-center text-base">
+                  <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-400 font-medium">Sede del Concesionario</p>
+                  <p id="v-branch" class="text-sm font-bold text-white">---</p>
+                </div>
+              </div>
+
+              <div class="p-3.5 bg-white/[0.04] rounded-2xl border border-white/10 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-300 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-user-tie"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs text-slate-400 font-medium">Asesor Asignado</p>
+                    <p id="v-advisor" class="text-sm font-bold text-white">---</p>
+                  </div>
+                </div>
+                <a id="whatsapp-btn" href="#" target="_blank" class="w-9 h-9 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl flex items-center justify-center shadow-md shadow-emerald-500/25 transition" title="Hablar por WhatsApp">
+                  <i class="fa-brands fa-whatsapp text-lg"></i>
+                </a>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
 
       <!-- Timeline Component -->
-      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
-        <div class="flex items-center justify-between mb-6">
+      <div class="at-dark relative overflow-hidden bg-gradient-to-br from-[#1a202c] to-[#0b0e14] rounded-3xl border border-white/10 shadow-2xl shadow-black/40 p-6 sm:p-8 text-white">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <div>
-            <h3 class="text-lg font-extrabold text-slate-900">Cronograma de Entrega (7 Etapas)</h3>
-            <p class="text-xs text-slate-500">Haz clic en cualquier hito para ver detalles.</p>
+            <span class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-blue-300">Seguimiento</span>
+            <h3 class="text-lg font-extrabold tracking-tight text-white">Cronograma de Entrega (7 Etapas)</h3>
+            <p class="text-xs text-slate-400">Haz clic en cualquier hito para ver detalles.</p>
           </div>
-          <button onclick="simulateNotification()" class="inline-flex items-center text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl border border-blue-100 transition">
+          <button onclick="simulateNotification()" class="inline-flex items-center justify-center text-xs font-bold text-blue-200 bg-white/10 hover:bg-white/15 px-3.5 py-2 rounded-xl border border-white/10 transition self-start sm:self-auto">
             <i class="fa-solid fa-bell mr-1.5"></i> Simular Alerta WhatsApp
           </button>
         </div>
@@ -159,13 +213,15 @@
       </div>
 
       <!-- Historial de Auditoría (Sin Checklist) -->
-      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
-        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-          <h4 class="font-bold text-base text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i>
+      <div class="at-dark relative overflow-hidden bg-gradient-to-br from-[#1a202c] to-[#0b0e14] rounded-3xl border border-white/10 shadow-2xl shadow-black/40 p-6 sm:p-8 text-white">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+          <h4 class="font-extrabold text-base tracking-tight text-white flex items-center gap-2">
+            <span class="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-300 border border-blue-400/20 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </span>
             Historial de Auditoría y Seguimiento
           </h4>
-          <span class="text-xs text-slate-400 font-medium">Trazabilidad oficial de etapas</span>
+          <span class="text-xs text-slate-400 font-medium hidden sm:inline">Trazabilidad oficial de etapas</span>
         </div>
         <div id="history-timeline" class="space-y-4 max-h-80 overflow-y-auto pr-2">
           <!-- Rendered by JS -->
@@ -175,13 +231,19 @@
     </section>
   </main>
 
+  <footer class="bg-[#091426] border-t border-white/5 py-5 text-center text-[11px] text-slate-500">
+    <span>© 2026 AutoTrack</span>
+    <span class="mx-2 text-slate-600">•</span>
+    <span>Plataforma para entrega de vehículos nuevos</span>
+  </footer>
+
   <!-- MODAL OBLIGATORIO: CAMBIO DE CONTRASEÑA EN PRIMER INGRESO -->
-  <div id="mandatory-password-modal" class="hidden fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-4">
+  <div id="mandatory-password-modal" class="hidden fixed inset-0 z-50 bg-[#091426]/90 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-100 relative">
       <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
         <i class="fa-solid fa-shield-halved"></i>
       </div>
-      <h3 class="text-xl font-black text-slate-900 text-center mb-1">Primer Ingreso a AutoTrack</h3>
+      <h3 class="text-xl font-black tracking-tight text-[#0c1930] text-center mb-1">Primer Ingreso a AutoTrack</h3>
       <p class="text-xs text-slate-500 text-center mb-6">Por tu seguridad, debes actualizar tu contraseña temporal por una clave personal antes de consultar tu vehículo.</p>
 
       <div id="change-pwd-error" class="hidden mb-4 p-3 bg-rose-50 text-rose-700 text-xs rounded-xl font-medium text-center">
@@ -191,20 +253,20 @@
       <form onsubmit="handleMandatoryChangePassword(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Contraseña Actual (Temporal)</label>
-          <input type="password" id="old-pwd-input" required placeholder="Ej. Temp1234" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+          <input type="password" id="old-pwd-input" required placeholder="Ej. Temp1234" class="w-full px-3.5 py-3 bg-[#f6f8fc] border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white">
         </div>
 
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Nueva Contraseña Personal</label>
-          <input type="password" id="new-pwd-input" required placeholder="Mínimo 6 caracteres" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+          <input type="password" id="new-pwd-input" required placeholder="Mínimo 6 caracteres" class="w-full px-3.5 py-3 bg-[#f6f8fc] border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white">
         </div>
 
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Confirmar Nueva Contraseña</label>
-          <input type="password" id="confirm-pwd-input" required placeholder="Repite tu nueva clave" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+          <input type="password" id="confirm-pwd-input" required placeholder="Repite tu nueva clave" class="w-full px-3.5 py-3 bg-[#f6f8fc] border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white">
         </div>
 
-        <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+        <button type="submit" class="w-full py-3.5 bg-gradient-to-br from-[#3375fa] to-[#1e5fe8] hover:brightness-110 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-blue-500/25 transition">
           Actualizar Contraseña y Ver Mi Vehículo
         </button>
       </form>
@@ -212,9 +274,9 @@
   </div>
 
   <!-- Notification Simulation Modal -->
-  <div id="notification-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+  <div id="notification-modal" class="hidden fixed inset-0 z-50 bg-[#091426]/60 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
         <div class="flex items-center gap-2">
           <i class="fa-brands fa-whatsapp text-emerald-500 text-xl"></i>
           <span class="font-bold text-sm text-slate-800">Notificación AutoTrack</span>
@@ -229,7 +291,7 @@
           <p id="notif-body">Tu vehículo ha avanzado a la etapa actual.</p>
         </div>
       </div>
-      <button onclick="closeNotificationModal()" class="w-full py-2.5 bg-slate-900 text-white font-semibold text-xs rounded-xl hover:bg-slate-800 transition">
+      <button onclick="closeNotificationModal()" class="w-full py-2.5 bg-[#091426] text-white font-semibold text-xs rounded-xl hover:bg-[#10213f] transition">
         Entendido
       </button>
     </div>
