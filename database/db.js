@@ -248,6 +248,10 @@ const db = {
     const newId = `VEH-${1001 + vehicles.length}`;
     const stageObj = STAGES.find(s => s.index === (vehicleData.current_stage_index || 1)) || STAGES[0];
 
+    let defaultImg = '/img/car-default.svg';
+    if (vehicleData.vehicle_type === 'Motocicleta') defaultImg = '/img/moto-default.svg';
+    else if (vehicleData.vehicle_type === 'Camioneta') defaultImg = '/img/suv-default.svg';
+
     const newVehicle = {
       id: newId,
       order_code: vehicleData.order_code || `PED-2024-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -262,6 +266,7 @@ const db = {
       dealership_branch: vehicleData.dealership_branch || "Almotores - Sede Principal",
       advisor_name: vehicleData.advisor_name || "Asesor Comercial",
       advisor_phone: vehicleData.advisor_phone || "+57 300 123 4567",
+      image_url: vehicleData.image_url || defaultImg,
       current_stage_index: stageObj.index,
       current_stage_name: stageObj.name,
       estimated_delivery_days: vehicleData.vehicle_type === "Motocicleta" ? 7 : 15,
@@ -281,31 +286,35 @@ const db = {
 
     vehicles.push(newVehicle);
 
-    const rawUser = (vehicleData.client_name || "cliente").toLowerCase().split(' ')[0] + "." + (vehicleData.client_name || "usuario").toLowerCase().split(' ').pop();
-    const cleanUsername = rawUser.replace(/[^a-z0-9.]/g, '');
-    const tempPassword = `Temp${Math.floor(1000 + Math.random() * 9000)}`;
+    let createdUser = null;
+    if (vehicleData.create_client_user !== false && vehicleData.client_name && vehicleData.client_doc) {
+      const rawUser = (vehicleData.client_name || "cliente").toLowerCase().split(' ')[0] + "." + (vehicleData.client_name || "usuario").toLowerCase().split(' ').pop();
+      const cleanUsername = rawUser.replace(/[^a-z0-9.]/g, '');
+      const tempPassword = `Temp${Math.floor(1000 + Math.random() * 9000)}`;
 
-    const newUser = {
-      id: `USR-${1001 + users.length}`,
-      username: cleanUsername,
-      password: tempPassword,
-      client_doc: vehicleData.client_doc,
-      client_name: vehicleData.client_name,
-      email: vehicleData.client_email || `${cleanUsername}@email.com`,
-      vehicle_id: newId,
-      must_change_password: true,
-      role: "client"
-    };
+      createdUser = {
+        id: `USR-${1001 + users.length}`,
+        username: cleanUsername,
+        password: tempPassword,
+        client_doc: vehicleData.client_doc,
+        client_name: vehicleData.client_name,
+        email: vehicleData.client_email || `${cleanUsername}@email.com`,
+        vehicle_id: newId,
+        must_change_password: true,
+        role: "client",
+        created_at: new Date().toISOString()
+      };
 
-    users.push(newUser);
+      users.push(createdUser);
+
+      // Enviar correo de bienvenida (envío SMTP real si hay credenciales configuradas, o consola)
+      emailService.sendWelcomeEmail({ user: createdUser, vehicle: newVehicle }).catch(err => {
+        console.error("Error al procesar correo de bienvenida:", err);
+      });
+    }
+
     writeData({ vehicles, users });
-
-    // Enviar correo de bienvenida (envío SMTP real si hay credenciales configuradas, o consola)
-    emailService.sendWelcomeEmail({ user: newUser, vehicle: newVehicle }).catch(err => {
-      console.error("Error al procesar correo de bienvenida:", err);
-    });
-
-    return { vehicle: newVehicle, createdUser: newUser };
+    return { vehicle: newVehicle, createdUser };
   },
 
   updateStatus: (id, newStageIndex, notes, updatedBy = "Personal Operativo") => {
@@ -392,6 +401,81 @@ const db = {
   getUserVehicle: (vehicleId) => {
     const data = readData();
     return (data.vehicles || []).find(v => v.id.toLowerCase() === (vehicleId || '').toLowerCase());
+  },
+
+  createUser: (userData) => {
+    const data = readData();
+    const users = data.users || [];
+    const cleanUsername = (userData.username || '').trim().toLowerCase();
+
+    if (!cleanUsername) {
+      return { success: false, message: "El nombre de usuario es obligatorio." };
+    }
+
+    if (users.some(u => u.username.toLowerCase() === cleanUsername)) {
+      return { success: false, message: `El nombre de usuario "${cleanUsername}" ya existe en el sistema.` };
+    }
+
+    const prefix = userData.role === 'client' ? 'USR' : 'ADM';
+    const newId = `${prefix}-${1001 + users.length}`;
+    const newUser = {
+      id: newId,
+      username: cleanUsername,
+      password: (userData.password || 'Almotores2024*').trim(),
+      client_doc: (userData.client_doc || '').trim(),
+      client_name: (userData.client_name || userData.username).trim(),
+      email: (userData.email || `${cleanUsername}@autotrack.com`).trim(),
+      vehicle_id: userData.vehicle_id || null,
+      must_change_password: userData.must_change_password === true,
+      role: userData.role || 'client',
+      created_at: new Date().toISOString()
+    };
+
+    users.push(newUser);
+    writeData({ vehicles: data.vehicles || [], users });
+    return { success: true, user: newUser };
+  },
+
+  updateVehicle: (id, updateData) => {
+    const data = readData();
+    const vehicles = data.vehicles || [];
+    const idx = vehicles.findIndex(v => v.id.toLowerCase() === (id || '').toLowerCase());
+    if (idx === -1) return null;
+
+    vehicles[idx] = {
+      ...vehicles[idx],
+      ...updateData,
+      updated_at: new Date().toISOString()
+    };
+
+    writeData(data);
+    return vehicles[idx];
+  },
+
+  deleteUser: (userId) => {
+    const data = readData();
+    let users = data.users || [];
+    const target = users.find(u => u.id === userId);
+    if (!target) return { success: false, message: "Usuario no encontrado." };
+
+    if (target.username.toLowerCase() === 'admin') {
+      return { success: false, message: "No es posible eliminar el administrador principal." };
+    }
+
+    users = users.filter(u => u.id !== userId);
+    writeData({ vehicles: data.vehicles || [], users });
+    return { success: true, message: "Usuario eliminado correctamente." };
+  },
+
+  deleteVehicle: (vehicleId) => {
+    const data = readData();
+    let vehicles = data.vehicles || [];
+    const target = vehicles.find(v => v.id === vehicleId);
+    if (!target) return { success: false, message: "Vehículo no encontrado." };
+
+    vehicles = vehicles.filter(v => v.id !== vehicleId);
+    writeData({ vehicles, users: data.users || [] });
+    return { success: true, message: "Vehículo eliminado correctamente." };
   }
 };
 

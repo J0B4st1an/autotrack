@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgMoto" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#134e4a"/>
+    </linearGradient>
+    <linearGradient id="motoAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14b8a6"/>
+      <stop offset="100%" stop-color="#0d9488"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="340" fill="url(#bgMoto)" rx="24"/>
+  <circle cx="300" cy="170" r="140" fill="#14b8a6" opacity="0.08"/>
+  <ellipse cx="300" cy="285" rx="210" ry="14" fill="#000000" opacity="0.45"/>
+
+  <!-- Motorcycle Silhouette / Illustration -->
+  <g transform="translate(60, 40)">
+    <!-- Rear Wheel -->
+    <g transform="translate(100, 195)">
+      <circle cx="0" cy="0" r="44" fill="#0f172a"/>
+      <circle cx="0" cy="0" r="32" fill="#334155"/>
+      <circle cx="0" cy="0" r="26" fill="#1e293b"/>
+      <circle cx="0" cy="0" r="10" fill="#0d9488"/>
+      <line x1="-24" y1="0" x2="24" y2="0" stroke="#5eead4" stroke-width="2.5"/>
+      <line x1="0" y1="-24" x2="0" y2="24" stroke="#5eead4" stroke-width="2.5"/>
+    </g>
+
+    <!-- Front Wheel -->
+    <g transform="translate(370, 195)">
+      <circle cx="0" cy="0" r="44" fill="#0f172a"/>
+      <circle cx="0" cy="0" r="32" fill="#334155"/>
+      <circle cx="0" cy="0" r="26" fill="#1e293b"/>
+      <circle cx="0" cy="0" r="10" fill="#0d9488"/>
+      <line x1="-24" y1="0" x2="24" y2="0" stroke="#5eead4" stroke-width="2.5"/>
+      <line x1="0" y1="-24" x2="0" y2="24" stroke="#5eead4" stroke-width="2.5"/>
+    </g>
+
+    <!-- Swingarm & Frame -->
+    <path d="M 100 195 L 200 185 L 230 135 L 340 100 L 370 195" stroke="#64748b" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M 200 185 L 280 175 L 320 115" stroke="#475569" stroke-width="6" fill="none"/>
+
+    <!-- Engine Block -->
+    <rect x="190" y="150" width="75" height="50" rx="8" fill="#334155"/>
+    <circle cx="225" cy="175" r="16" fill="#64748b"/>
+    <!-- Exhaust pipe -->
+    <path d="M 240 185 L 140 205 L 90 200" stroke="#94a3b8" stroke-width="5" stroke-linecap="round" fill="none"/>
+
+    <!-- Fuel Tank & Seat Bodywork -->
+    <path d="M 140 130 Q 180 135 220 135 Q 260 95 320 95 Q 330 110 320 130 L 220 145 Z" fill="url(#motoAccent)"/>
+    <path d="M 130 135 Q 160 130 200 135 L 180 150 L 140 145 Z" fill="#0f172a"/>
+
+    <!-- Fork & Handlebar -->
+    <line x1="335" y1="80" x2="370" y2="195" stroke="#94a3b8" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 320 75 L 350 78 L 330 85" stroke="#f1f5f9" stroke-width="4" stroke-linecap="round" fill="none"/>
+
+    <!-- Headlight -->
+    <polygon points="350,85 365,95 352,105" fill="#fef08a"/>
+  </g>
+  <text x="300" y="315" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="13" fill="#64748b" letter-spacing="1">MOTOCICLETA • ALMOTORES</text>
+</svg>
