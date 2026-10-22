@@ -33,7 +33,7 @@
     .at-dark .bg-slate-200, .at-dark .bg-slate-300, .at-dark .bg-gray-200, .at-dark .bg-gray-300 { background-color: rgba(255,255,255,.14); }
     .at-dark .bg-blue-50, .at-dark .bg-blue-100 { background-color: rgba(59,130,246,.16); }
     .at-dark .bg-indigo-50, .at-dark .bg-indigo-100 { background-color: rgba(99,102,241,.16); }
-    .at-dark .bg-emerald-50, .at-dark .bg-emerald-100, .at-dark .bg-green-50, .at-dark .bg-green-100 { background-color: rgba(16,185,129,.16); }
+    .at-dark .bg-emerald-50, .at-dark .bg-emerald-100, .at-dark .bg-green-50, .at-dark .bg-green-100 { background-color: rgba(38, 151, 113, 0.16); }
     .at-dark .bg-amber-50, .at-dark .bg-amber-100, .at-dark .bg-orange-50 { background-color: rgba(245,158,11,.16); }
     .at-dark .bg-rose-50, .at-dark .bg-rose-100, .at-dark .bg-red-50, .at-dark .bg-red-100 { background-color: rgba(244,63,94,.16); }
     .at-dark .border-slate-100, .at-dark .border-slate-200, .at-dark .border-slate-300, .at-dark .border-gray-100, .at-dark .border-gray-200 { border-color: rgba(255,255,255,.1); }
@@ -44,12 +44,16 @@
     .at-dark .divide-slate-100 > * + *, .at-dark .divide-slate-200 > * + * { border-color: rgba(255,255,255,.1); }
     /* Cronograma: 7 mini tarjetas en el mismo lenguaje oscuro (completada / actual / pendiente) */
     #timeline-container [class*="bg-white"], #timeline-container [class*="bg-slate-50"]:not([class*="bg-slate-500"]), #timeline-container [class*="bg-slate-100"] { background: rgba(255,255,255,.04) !important; border-color: rgba(255,255,255,.12) !important; }
-    #timeline-container [class*="bg-emerald-50"]:not([class*="bg-emerald-500"]), #timeline-container [class*="bg-emerald-100"], #timeline-container [class*="bg-green-50"]:not([class*="bg-green-500"]), #timeline-container [class*="bg-green-100"] { background: linear-gradient(160deg, rgba(16,185,129,.16), rgba(16,185,129,.05)) !important; border-color: rgba(52,211,153,.38) !important; }
+    #timeline-container [class*="bg-emerald-50"]:not([class*="bg-emerald-500"]), #timeline-container [class*="bg-emerald-100"], #timeline-container [class*="bg-green-50"]:not([class*="bg-green-500"]), #timeline-container [class*="bg-green-100"] { background: linear-gradient(160deg, rgba(66, 162, 130, 0.16), rgba(16,185,129,.05)) !important; border-color: rgba(52,211,153,.38) !important; }
     #timeline-container [class*="bg-blue-50"]:not([class*="bg-blue-500"]), #timeline-container [class*="bg-blue-100"], #timeline-container [class*="bg-indigo-50"]:not([class*="bg-indigo-500"]), #timeline-container [class*="bg-indigo-100"] { background: linear-gradient(160deg, rgba(59,130,246,.30), rgba(59,130,246,.08)) !important; border-color: rgba(96,165,250,.65) !important; box-shadow: 0 0 0 1px rgba(96,165,250,.25), 0 12px 32px rgba(43,109,243,.25) !important; }
     #timeline-container [class*="bg-white"] .text-slate-500, #timeline-container [class*="bg-white"] .text-slate-600 { color: #94a3b8; }
+      /* Cronograma: títulos de cada etapa más claros y nítidos */
+    #timeline-container [class*="text-emerald-9"], #timeline-container [class*="text-emerald-8"], #timeline-container [class*="text-emerald-7"], #timeline-container [class*="text-green-9"], #timeline-container [class*="text-green-8"], #timeline-container [class*="text-green-7"] { color: #bbf7d0 !important; opacity: 1 !important; font-weight: 800 !important; font-size: 14px !important; line-height: 1.25 !important; }
+    #timeline-container [class*="text-blue-9"], #timeline-container [class*="text-blue-8"], #timeline-container [class*="text-blue-7"], #timeline-container [class*="text-indigo-9"], #timeline-container [class*="text-indigo-8"], #timeline-container [class*="text-indigo-7"] { color: #e0ecff !important; opacity: 1 !important; font-weight: 800 !important; font-size: 14px !important; line-height: 1.25 !important; }
+    #timeline-container [class*="text-slate-9"], #timeline-container [class*="text-slate-8"], #timeline-container [class*="text-gray-9"], #timeline-container [class*="text-gray-8"] { color: #f1f5f9 !important; opacity: 1 !important; font-weight: 800 !important; font-size: 14px !important; line-height: 1.25 !important; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#b4c7e2] text-[#10213f] antialiased">
+<body class="min-h-screen flex flex-col bg-[#162a4a] text-[#10213f] antialiased">
 
   <!-- Header / Navbar -->
   <header class="bg-[#091426] text-white border-b border-white/[0.07] sticky top-0 z-40">
