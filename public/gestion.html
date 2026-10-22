@@ -7,11 +7,106 @@
   <link rel="stylesheet" href="/css/styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+  <style>
+    /* ===== FONDO PROFESIONAL (ajustado) ===== */
+    body {
+      font-family: 'Manrope', sans-serif;
+      background-color: #070f1d;
+      background-image:
+        /* luces suaves de color */
+        radial-gradient(900px 500px at 12% -5%, rgba(51,117,250,.18), transparent 60%),
+        radial-gradient(800px 500px at 100% 10%, rgba(99,102,241,.12), transparent 60%),
+        /* cuadrícula sutil */
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+        /* base degradada */
+        linear-gradient(180deg, #0b1830 0%, #070f1d 100%);
+      background-size: auto, auto, 40px 40px, 40px 40px, auto;
+      background-attachment: fixed;
+    }
+    select option { background: #111827; color: #f1f5f9; }
+
+    /* Estilo oscuro compartido con el portal del cliente */
+    .cardd { background: linear-gradient(135deg, #1a202c, #0b0e14); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04); }
+    .fld { width: 100%; padding: .625rem .75rem; background: rgba(255,255,255,.05); color: #fff; border: 1px solid rgba(255,255,255,.1); border-radius: .75rem; font-size: .75rem; font-weight: 500; outline: none; }
+    .fld::placeholder { color: #64748b; }
+    .fld:focus { border-color: #60a5fa; box-shadow: 0 0 0 4px rgba(59,130,246,.2); }
+    .lbl { display: block; margin-bottom: .25rem; color: #cbd5e1; font-size: .75rem; font-weight: 700; }
+    .btn-brand { background: linear-gradient(135deg, #3375fa, #1e5fe8); color: #fff; box-shadow: 0 10px 22px rgba(43,109,243,.28); }
+    .btn-brand:hover { filter: brightness(1.1); }
+
+    /* Adapta el contenido que dibuja app-gestion.js (pensado para fondo claro) */
+    .at-dark { color-scheme: dark; }
+    .at-dark .text-slate-900, .at-dark .text-slate-800, .at-dark .text-slate-700, .at-dark .text-gray-900, .at-dark .text-gray-800, .at-dark .text-gray-700 { color: #f1f5f9; }
+    .at-dark .text-slate-600, .at-dark .text-slate-500, .at-dark .text-gray-600, .at-dark .text-gray-500 { color: #94a3b8; }
+    .at-dark .text-blue-600, .at-dark .text-blue-700, .at-dark .text-blue-800 { color: #93c5fd; }
+    .at-dark .text-indigo-600, .at-dark .text-indigo-700, .at-dark .text-indigo-800 { color: #a5b4fc; }
+    .at-dark .text-purple-600, .at-dark .text-purple-700, .at-dark .text-purple-800 { color: #d8b4fe; }
+    .at-dark .text-emerald-600, .at-dark .text-emerald-700, .at-dark .text-emerald-800, .at-dark .text-green-600, .at-dark .text-green-700 { color: #6ee7b7; }
+    .at-dark .text-amber-600, .at-dark .text-amber-700, .at-dark .text-amber-800, .at-dark .text-orange-600 { color: #fcd34d; }
+    .at-dark .text-rose-600, .at-dark .text-rose-700, .at-dark .text-red-600, .at-dark .text-red-700 { color: #fda4af; }
+    .at-dark .bg-white, .at-dark .bg-slate-50, .at-dark .bg-slate-100, .at-dark .bg-gray-50, .at-dark .bg-gray-100 { background-color: rgba(255,255,255,.05); }
+    .at-dark .bg-slate-200, .at-dark .bg-slate-300, .at-dark .bg-gray-200, .at-dark .bg-gray-300 { background-color: rgba(255,255,255,.14); }
+    .at-dark .bg-blue-50, .at-dark .bg-blue-100 { background-color: rgba(59,130,246,.16); }
+    .at-dark .bg-indigo-50, .at-dark .bg-indigo-100 { background-color: rgba(99,102,241,.16); }
+    .at-dark .bg-purple-50, .at-dark .bg-purple-100 { background-color: rgba(168,85,247,.16); }
+    .at-dark .bg-emerald-50, .at-dark .bg-emerald-100, .at-dark .bg-green-50, .at-dark .bg-green-100 { background-color: rgba(16,185,129,.16); }
+    .at-dark .bg-amber-50, .at-dark .bg-amber-100, .at-dark .bg-orange-50 { background-color: rgba(245,158,11,.16); }
+    .at-dark .bg-rose-50, .at-dark .bg-rose-100, .at-dark .bg-red-50, .at-dark .bg-red-100 { background-color: rgba(244,63,94,.16); }
+    .at-dark .border-slate-100, .at-dark .border-slate-200, .at-dark .border-slate-300, .at-dark .border-gray-100, .at-dark .border-gray-200 { border-color: rgba(255,255,255,.1); }
+    .at-dark .border-blue-100, .at-dark .border-blue-200, .at-dark .border-indigo-100, .at-dark .border-indigo-200 { border-color: rgba(96,165,250,.28); }
+    .at-dark .border-emerald-100, .at-dark .border-emerald-200 { border-color: rgba(52,211,153,.28); }
+    .at-dark .border-amber-100, .at-dark .border-amber-200 { border-color: rgba(251,191,36,.28); }
+    .at-dark .border-rose-100, .at-dark .border-rose-200 { border-color: rgba(251,113,133,.28); }
+    .at-dark .divide-slate-100 > * + *, .at-dark .divide-slate-200 > * + * { border-color: rgba(255,255,255,.1); }
+    .at-dark .bg-indigo-600 { background: linear-gradient(135deg, #3375fa, #1e5fe8); }
+    .at-dark tbody tr:hover { background-color: rgba(255,255,255,.04) !important; }
+    .at-dark select { color: #f1f5f9; }
+    /* Tarjetas de vehículos (las dibuja el JS): mismo fondo oscuro que el resto */
+    #vehicles-cards-grid > * { background: linear-gradient(135deg, #1a202c, #0b0e14) !important; border-color: rgba(255,255,255,.1) !important; box-shadow: 0 20px 40px rgba(0,0,0,.35) !important; }
+
+    /* ===== LEGIBILIDAD: sin zonas blancas y con la info importante bien visible ===== */
+    /* Fondos claros que dibuja el JS -> superficies oscuras */
+    #vehicles-cards-grid [class*="bg-white"],
+    #users-table-body [class*="bg-white"] { background-color: rgba(9,20,38,.78) !important; }
+    #vehicles-cards-grid [class*="bg-slate-50"], #vehicles-cards-grid [class*="bg-slate-100"], #vehicles-cards-grid [class*="bg-gray-50"], #vehicles-cards-grid [class*="bg-gray-100"],
+    #users-table-body [class*="bg-slate-50"], #users-table-body [class*="bg-slate-100"], #users-table-body [class*="bg-gray-50"], #users-table-body [class*="bg-gray-100"] { background-color: rgba(255,255,255,.06) !important; }
+    #vehicles-cards-grid [class*="border-slate-"], #vehicles-cards-grid [class*="border-gray-"],
+    #users-table-body [class*="border-slate-"], #users-table-body [class*="border-gray-"] { border-color: rgba(255,255,255,.12) !important; }
+    /* Texto principal casi blanco, secundario claro */
+    #vehicles-cards-grid [class*="text-slate-9"], #vehicles-cards-grid [class*="text-slate-8"], #vehicles-cards-grid [class*="text-slate-7"],
+    #vehicles-cards-grid [class*="text-gray-9"], #vehicles-cards-grid [class*="text-gray-8"], #vehicles-cards-grid [class*="text-gray-7"],
+    #users-table-body [class*="text-slate-9"], #users-table-body [class*="text-slate-8"], #users-table-body [class*="text-slate-7"],
+    #users-table-body [class*="text-gray-9"], #users-table-body [class*="text-gray-8"], #users-table-body [class*="text-gray-7"] { color: #f8fafc !important; }
+    #vehicles-cards-grid [class*="text-slate-6"], #vehicles-cards-grid [class*="text-slate-5"], #vehicles-cards-grid [class*="text-slate-4"],
+    #vehicles-cards-grid [class*="text-gray-6"], #vehicles-cards-grid [class*="text-gray-5"], #vehicles-cards-grid [class*="text-gray-4"],
+    #users-table-body [class*="text-slate-6"], #users-table-body [class*="text-slate-5"], #users-table-body [class*="text-slate-4"],
+    #users-table-body [class*="text-gray-6"], #users-table-body [class*="text-gray-5"], #users-table-body [class*="text-gray-4"] { color: #cbd5e1 !important; }
+
+    /* Pestañas: la pestaña inactiva ya no se ve apagada */
+    #tab-btn-vehicles.text-slate-600, #tab-btn-users.text-slate-600 { color: #e2e8f0; }
+    #tab-btn-vehicles.text-slate-600:hover, #tab-btn-users.text-slate-600:hover { color: #fff; }
+    #badge-total-users.text-slate-800 { color: #f1f5f9; }
+
+    /* Información importante más grande */
+    #vehicles-cards-grid .text-xs { font-size: .875rem; line-height: 1.3rem; }
+    #vehicles-cards-grid .text-\[11px\] { font-size: .8125rem; line-height: 1.2rem; }
+    #vehicles-cards-grid .text-\[10px\] { font-size: .75rem; line-height: 1.1rem; }
+    #users-table-body { font-size: .9375rem; }
+    #users-table-body td { padding-top: 1.05rem; padding-bottom: 1.05rem; }
+    #users-table-body .text-xs { font-size: .9375rem; line-height: 1.35rem; }
+    #users-table-body .text-\[11px\] { font-size: .8125rem; line-height: 1.2rem; }
+    #users-table-body .text-\[10px\] { font-size: .75rem; line-height: 1.1rem; }
+    .users-table thead th { font-size: .75rem; color: #e2e8f0; padding-top: 1.1rem; padding-bottom: 1.1rem; }
+    /* Subtítulos de las tarjetas de estadísticas */
+    #section-users .cardd p.text-slate-400 { color: #e2e8f0; font-size: .8125rem; }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-100 text-slate-800 antialiased">
+<body class="min-h-screen flex flex-col text-slate-100 antialiased">
 
   <!-- Header Protegido Staff -->
-  <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+  <header class="bg-[#091426] text-white sticky top-0 z-40 border-b border-white/[0.07]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a href="/admin.html" class="flex items-center" aria-label="AutoTrack, panel operativo">
@@ -25,27 +120,27 @@
 
       <!-- Navegación Staff -->
       <div class="flex items-center space-x-2 sm:space-x-3">
-        <a href="/admin.html" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
-          <i class="fa-solid fa-car-side text-indigo-400"></i>
+        <a href="/admin.html" class="px-3 py-1.5 text-xs font-semibold bg-white/5 hover:bg-white/10 rounded-xl text-slate-200 border border-white/10 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-car-side text-blue-300"></i>
           <span class="hidden md:inline">Panel Operativo</span>
         </a>
 
-        <a href="/gestion.html" class="px-3 py-1.5 text-xs font-semibold bg-indigo-600 text-white rounded-xl shadow-sm transition flex items-center gap-1.5">
+        <a href="/gestion.html" class="btn-brand px-3 py-1.5 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
           <i class="fa-solid fa-layer-group"></i>
           <span>Gestión</span>
         </a>
 
-        <a href="/metrics.html" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 rounded-xl text-indigo-200 border border-slate-700 transition flex items-center gap-1.5">
+        <a href="/metrics.html" class="px-3 py-1.5 text-xs font-semibold bg-white/5 hover:bg-white/10 rounded-xl text-blue-200 border border-white/10 transition flex items-center gap-1.5">
           <i class="fa-solid fa-chart-pie"></i>
           <span class="hidden md:inline">Métricas UX</span>
         </a>
 
-        <div class="hidden sm:flex items-center space-x-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
-          <i class="fa-solid fa-user-shield text-xs text-indigo-400"></i>
+        <div class="hidden sm:flex items-center space-x-2 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10">
+          <i class="fa-solid fa-user-shield text-xs text-blue-300"></i>
           <span id="admin-user-display" class="text-xs font-bold text-slate-200">Staff</span>
         </div>
 
-        <button onclick="logoutAdmin()" class="px-3 py-1.5 text-xs font-semibold bg-rose-900/60 hover:bg-rose-800 rounded-xl text-rose-200 border border-rose-800 transition">
+        <button onclick="logoutAdmin()" class="px-3 py-1.5 text-xs font-semibold bg-rose-950/60 hover:bg-rose-900 rounded-xl text-rose-200 border border-rose-800/70 transition">
           <i class="fa-solid fa-right-from-bracket mr-1"></i> <span class="hidden sm:inline">Salir</span>
         </button>
       </div>
@@ -56,7 +151,7 @@
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
     <!-- Toast de Notificaciones -->
-    <div id="toast-msg" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between text-emerald-800 text-xs font-semibold shadow-sm transition-all duration-300">
+    <div id="toast-msg" class="at-dark hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between text-emerald-800 text-xs font-semibold shadow-sm transition-all duration-300">
       <div class="flex items-center space-x-2">
         <i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
         <span id="toast-text">Acción completada con éxito.</span>
@@ -67,7 +162,7 @@
     </div>
 
     <!-- Pestañas de Navegación de Gestión (Tabs) -->
-    <div class="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between flex-wrap gap-2">
+    <div class="at-dark cardd p-2 rounded-2xl flex items-center justify-between flex-wrap gap-2">
       <div class="flex items-center gap-2">
         <button id="tab-btn-vehicles" onclick="switchTab('vehicles')" class="px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-indigo-600 text-white shadow-sm">
           <i class="fa-solid fa-car"></i>
@@ -82,7 +177,7 @@
         </button>
       </div>
 
-      <div class="text-xs text-slate-500 font-medium px-2">
+      <div class="text-xs text-slate-400 font-medium px-2">
         Almotores S.A.S. • Control Maestro
       </div>
     </div>
@@ -90,22 +185,22 @@
     <!-- ========================================== -->
     <!-- SECCIÓN 1: CATÁLOGO DE VEHÍCULOS           -->
     <!-- ========================================== -->
-    <section id="section-vehicles" class="space-y-6">
+    <section id="section-vehicles" class="at-dark space-y-6">
       <!-- Barra de Filtros y Creación -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div class="cardd p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between">
         <div class="relative w-full md:w-80">
           <input 
             type="text" 
             id="search-vehicle-input" 
             placeholder="Buscar por marca, modelo, VIN, cliente..." 
-            class="w-full pl-10 pr-4 py-2 bg-slate-50 rounded-xl text-xs border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
+            class="fld pl-10 py-2.5"
             onkeyup="filterVehiclesList()"
           />
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
         </div>
 
         <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
-          <select id="filter-vehicle-type" onchange="filterVehiclesList()" class="px-3 py-2 bg-slate-50 rounded-xl text-xs font-semibold border border-slate-200">
+          <select id="filter-vehicle-type" onchange="filterVehiclesList()" class="fld w-auto font-semibold">
             <option value="">Todos los tipos</option>
             <option value="Automóvil">Automóviles</option>
             <option value="Camioneta">Camionetas / SUV</option>
@@ -113,7 +208,7 @@
             <option value="Utilitario">Utilitarios</option>
           </select>
 
-          <button onclick="openCreateVehicleModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5">
+          <button onclick="openCreateVehicleModal()" class="btn-brand px-4 py-2.5 font-bold text-xs rounded-xl transition flex items-center gap-1.5">
             <i class="fa-solid fa-plus"></i>
             <span>Nuevo Vehículo</span>
           </button>
@@ -129,55 +224,55 @@
     <!-- ========================================== -->
     <!-- SECCIÓN 2: DIRECTORIO DE USUARIOS          -->
     <!-- ========================================== -->
-    <section id="section-users" class="hidden space-y-6">
+    <section id="section-users" class="at-dark hidden space-y-6">
       <!-- Estadísticas de Usuarios -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="cardd p-4 rounded-2xl flex items-center justify-between">
           <div>
-            <p class="text-xs text-slate-500 font-medium">Total de Usuarios</p>
-            <h3 id="stat-users-total" class="text-2xl font-black text-slate-900 mt-0.5">0</h3>
+            <p class="text-xs text-slate-400 font-medium">Total de Usuarios</p>
+            <h3 id="stat-users-total" class="text-3xl font-black text-white mt-0.5">0</h3>
           </div>
-          <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
+          <div class="w-11 h-11 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-400/20 flex items-center justify-center text-lg">
             <i class="fa-solid fa-users"></i>
           </div>
         </div>
 
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="cardd p-4 rounded-2xl flex items-center justify-between">
           <div>
-            <p class="text-xs text-slate-500 font-medium">Personal Staff / Admin</p>
-            <h3 id="stat-users-staff" class="text-2xl font-black text-purple-600 mt-0.5">0</h3>
+            <p class="text-xs text-slate-400 font-medium">Personal Staff / Admin</p>
+            <h3 id="stat-users-staff" class="text-3xl font-black text-purple-300 mt-0.5">0</h3>
           </div>
-          <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg">
+          <div class="w-11 h-11 rounded-xl bg-purple-500/15 text-purple-300 border border-purple-400/20 flex items-center justify-center text-lg">
             <i class="fa-solid fa-user-tie"></i>
           </div>
         </div>
 
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="cardd p-4 rounded-2xl flex items-center justify-between">
           <div>
-            <p class="text-xs text-slate-500 font-medium">Clientes Compradores</p>
-            <h3 id="stat-users-clients" class="text-2xl font-black text-blue-600 mt-0.5">0</h3>
+            <p class="text-xs text-slate-400 font-medium">Clientes Compradores</p>
+            <h3 id="stat-users-clients" class="text-3xl font-black text-blue-300 mt-0.5">0</h3>
           </div>
-          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
+          <div class="w-11 h-11 rounded-xl bg-blue-500/15 text-blue-300 border border-blue-400/20 flex items-center justify-center text-lg">
             <i class="fa-solid fa-user-check"></i>
           </div>
         </div>
       </div>
 
       <!-- Barra de Filtros y Creación de Usuarios -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div class="cardd p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between">
         <div class="relative w-full md:w-80">
           <input 
             type="text" 
             id="search-user-input" 
             placeholder="Buscar por nombre, usuario, cédula, correo..." 
-            class="w-full pl-10 pr-4 py-2 bg-slate-50 rounded-xl text-xs border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
+            class="fld pl-10 py-2.5"
             onkeyup="filterUsersList()"
           />
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
         </div>
 
         <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
-          <select id="filter-user-role" onchange="filterUsersList()" class="px-3 py-2 bg-slate-50 rounded-xl text-xs font-semibold border border-slate-200">
+          <select id="filter-user-role" onchange="filterUsersList()" class="fld w-auto font-semibold">
             <option value="">Todos los roles</option>
             <option value="admin">Administrador General</option>
             <option value="staff_asesor">Asesor Comercial</option>
@@ -186,7 +281,7 @@
             <option value="client">Cliente Comprador</option>
           </select>
 
-          <button onclick="openCreateUserModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5">
+          <button onclick="openCreateUserModal()" class="btn-brand px-4 py-2.5 font-bold text-xs rounded-xl transition flex items-center gap-1.5">
             <i class="fa-solid fa-user-plus"></i>
             <span>Nuevo Usuario</span>
           </button>
@@ -194,11 +289,11 @@
       </div>
 
       <!-- Tabla de Usuarios -->
-      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="cardd rounded-3xl overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
+          <table class="users-table w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+              <tr class="bg-white/5 text-slate-400 text-[11px] font-bold uppercase tracking-wider border-b border-white/10">
                 <th class="py-3.5 px-6">Usuario & Nombre</th>
                 <th class="py-3.5 px-6">Identificación & Correo</th>
                 <th class="py-3.5 px-6">Rol de Acceso</th>
@@ -207,7 +302,7 @@
                 <th class="py-3.5 px-6 text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody id="users-table-body" class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
+            <tbody id="users-table-body" class="divide-y divide-white/10 text-sm font-medium text-slate-200">
               <!-- Renderizado dinámico de usuarios -->
             </tbody>
           </table>
@@ -220,15 +315,15 @@
   <!-- ======================================================= -->
   <!-- MODAL: REGISTRAR VEHÍCULO CON CARGA DE IMAGEN           -->
   <!-- ======================================================= -->
-  <div id="modal-vehicle" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+  <div id="modal-vehicle" class="hidden fixed inset-0 z-50 bg-[#091426]/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="cardd rounded-3xl max-w-2xl w-full p-6 text-white max-h-[90vh] overflow-y-auto">
       
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-car text-indigo-600"></i>
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+          <span class="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-300 border border-blue-400/20 flex items-center justify-center text-sm"><i class="fa-solid fa-car"></i></span>
           <span>Registrar Nuevo Vehículo</span>
         </h3>
-        <button onclick="closeCreateVehicleModal()" class="text-slate-400 hover:text-slate-600">
+        <button onclick="closeCreateVehicleModal()" class="text-slate-400 hover:text-white">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
@@ -236,17 +331,17 @@
       <form id="form-create-vehicle" onsubmit="handleSaveVehicle(event)" class="py-4 space-y-4">
         
         <!-- FOTO DEL VEHÍCULO (CARGA A CARPETA IMG) -->
-        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-          <label class="block text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
+        <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+          <label class="block text-xs font-bold text-slate-200 mb-2 flex items-center justify-between">
             <span>📷 Fotografía del Vehículo (Guardada en /public/img)</span>
             <span class="text-[10px] text-slate-400 font-normal">Formatos: JPG, PNG, WEBP</span>
           </label>
           
           <div class="flex flex-col sm:flex-row items-center gap-4">
             <!-- Vista Previa -->
-            <div class="w-full sm:w-44 h-28 bg-slate-200 rounded-xl overflow-hidden border border-slate-300 flex items-center justify-center relative flex-shrink-0">
+            <div class="w-full sm:w-44 h-28 bg-black/40 rounded-xl overflow-hidden border border-white/10 flex items-center justify-center relative flex-shrink-0">
               <img id="img-preview" src="/img/car-default.svg" alt="Vista previa" class="w-full h-full object-cover">
-              <span id="preview-badge" class="absolute bottom-1 right-1 bg-slate-900/70 text-white text-[9px] px-1.5 py-0.5 rounded font-mono">
+              <span id="preview-badge" class="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] px-1.5 py-0.5 rounded font-mono">
                 Por defecto
               </span>
             </div>
@@ -263,13 +358,13 @@
               <button 
                 type="button" 
                 onclick="document.getElementById('vehicle-image-file').click()" 
-                class="w-full py-2.5 px-4 bg-white border-2 border-dashed border-indigo-300 hover:border-indigo-500 rounded-xl text-xs font-bold text-indigo-600 hover:bg-indigo-50/50 transition flex items-center justify-center gap-2"
+                class="w-full py-2.5 px-4 bg-blue-500/10 border-2 border-dashed border-blue-400/40 hover:border-blue-300 rounded-xl text-xs font-bold text-blue-200 hover:bg-blue-500/20 transition flex items-center justify-center gap-2"
               >
                 <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
                 <span>Seleccionar imagen del equipo</span>
               </button>
               <p class="text-[11px] text-slate-400 mt-1.5 text-center sm:text-left">
-                La imagen se almacenará automáticamente en la carpeta <code class="bg-slate-200 px-1 py-0.5 rounded font-mono text-[10px] text-slate-700">public/img/</code>.
+                La imagen se almacenará automáticamente en la carpeta <code class="bg-white/10 px-1 py-0.5 rounded font-mono text-[10px] text-slate-200">public/img/</code>.
               </p>
             </div>
           </div>
@@ -278,13 +373,13 @@
         <!-- DATOS DEL VEHÍCULO -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Marca y Modelo *</label>
-            <input type="text" id="veh-model" required placeholder="Ej. Mazda CX-30 Grand Touring 2024" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+            <label class="lbl">Marca y Modelo *</label>
+            <input type="text" id="veh-model" required placeholder="Ej. Mazda CX-30 Grand Touring 2024" class="fld">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Tipo de Vehículo *</label>
-            <select id="veh-type" onchange="updateDefaultImage(this.value)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold">
+            <label class="lbl">Tipo de Vehículo *</label>
+            <select id="veh-type" onchange="updateDefaultImage(this.value)" class="fld font-semibold">
               <option value="Automóvil">Automóvil</option>
               <option value="Camioneta">Camioneta / SUV</option>
               <option value="Motocicleta">Motocicleta</option>
@@ -295,69 +390,69 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Color *</label>
-            <input type="text" id="veh-color" placeholder="Ej. Rojo Cristal Metalizado" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+            <label class="lbl">Color *</label>
+            <input type="text" id="veh-color" placeholder="Ej. Rojo Cristal Metalizado" class="fld">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">VIN / Número de Chasis</label>
-            <input type="text" id="veh-vin" placeholder="Opcional (se autogenera)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono">
+            <label class="lbl">VIN / Número de Chasis</label>
+            <input type="text" id="veh-vin" placeholder="Opcional (se autogenera)" class="fld font-mono">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Código de Pedido</label>
-            <input type="text" id="veh-order" placeholder="Opcional (PED-2024-XXXX)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono">
+            <label class="lbl">Código de Pedido</label>
+            <input type="text" id="veh-order" placeholder="Opcional (PED-2024-XXXX)" class="fld font-mono">
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Sede de Entrega</label>
-            <input type="text" id="veh-branch" value="Almotores - Sede Principal Norte" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+            <label class="lbl">Sede de Entrega</label>
+            <input type="text" id="veh-branch" value="Almotores - Sede Principal Norte" class="fld">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Asesor Comercial</label>
-            <input type="text" id="veh-advisor" value="Laura Gómez" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+            <label class="lbl">Asesor Comercial</label>
+            <input type="text" id="veh-advisor" value="Laura Gómez" class="fld">
           </div>
         </div>
 
         <!-- DATOS DEL CLIENTE VINCULADO -->
-        <div class="border-t border-slate-100 pt-3">
-          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <i class="fa-solid fa-user-tag text-indigo-500"></i>
+        <div class="border-t border-white/10 pt-3">
+          <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-user-tag text-blue-300"></i>
             <span>Datos del Cliente Comprador</span>
           </h4>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo *</label>
-              <input type="text" id="veh-client-name" required placeholder="Ej. Carlos Eduardo Mendoza" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+              <label class="lbl">Nombre Completo *</label>
+              <input type="text" id="veh-client-name" required placeholder="Ej. Carlos Eduardo Mendoza" class="fld">
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Cédula / Documento *</label>
-              <input type="text" id="veh-client-doc" required placeholder="Ej. 1098765432" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+              <label class="lbl">Cédula / Documento *</label>
+              <input type="text" id="veh-client-doc" required placeholder="Ej. 1098765432" class="fld">
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Correo Electrónico (Notificación) *</label>
-              <input type="email" id="veh-client-email" required placeholder="carlos.mendoza@email.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+              <label class="lbl">Correo Electrónico (Notificación) *</label>
+              <input type="email" id="veh-client-email" required placeholder="carlos.mendoza@email.com" class="fld">
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono / WhatsApp</label>
-              <input type="text" id="veh-client-phone" placeholder="+57 315 890 1234" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+              <label class="lbl">Teléfono / WhatsApp</label>
+              <input type="text" id="veh-client-phone" placeholder="+57 315 890 1234" class="fld">
             </div>
           </div>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-          <button type="button" onclick="closeCreateVehicleModal()" class="px-4 py-2.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-xl hover:bg-slate-200 transition">
+        <div class="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeCreateVehicleModal()" class="px-4 py-2.5 bg-white/10 text-slate-200 text-xs font-bold rounded-xl hover:bg-white/15 transition">
             Cancelar
           </button>
-          <button type="submit" id="btn-save-vehicle" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5">
+          <button type="submit" id="btn-save-vehicle" class="btn-brand px-5 py-2.5 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
             <i class="fa-solid fa-floppy-disk"></i>
             <span>Guardar Vehículo</span>
           </button>
@@ -370,15 +465,15 @@
   <!-- ======================================================= -->
   <!-- MODAL: CREAR NUEVO USUARIO                              -->
   <!-- ======================================================= -->
-  <div id="modal-user" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
+  <div id="modal-user" class="hidden fixed inset-0 z-50 bg-[#091426]/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="cardd rounded-3xl max-w-lg w-full p-6 text-white">
       
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-user-plus text-indigo-600"></i>
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+          <span class="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-300 border border-blue-400/20 flex items-center justify-center text-sm"><i class="fa-solid fa-user-plus"></i></span>
           <span>Crear Nuevo Usuario</span>
         </h3>
-        <button onclick="closeCreateUserModal()" class="text-slate-400 hover:text-slate-600">
+        <button onclick="closeCreateUserModal()" class="text-slate-400 hover:text-white">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
@@ -386,19 +481,19 @@
       <form id="form-create-user" onsubmit="handleSaveUser(event)" class="py-4 space-y-3.5">
         
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo *</label>
-          <input type="text" id="usr-name" required placeholder="Ej. Juan Pérez" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+          <label class="lbl">Nombre Completo *</label>
+          <input type="text" id="usr-name" required placeholder="Ej. Juan Pérez" class="fld">
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre de Usuario (@username) *</label>
-            <input type="text" id="usr-username" required placeholder="Ej. juan.perez" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-medium">
+            <label class="lbl">Nombre de Usuario (@username) *</label>
+            <input type="text" id="usr-username" required placeholder="Ej. juan.perez" class="fld font-mono">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Rol en el Sistema *</label>
-            <select id="usr-role" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold">
+            <label class="lbl">Rol en el Sistema *</label>
+            <select id="usr-role" class="fld font-semibold">
               <option value="client">Cliente Comprador</option>
               <option value="staff_asesor">Asesor Comercial (Staff)</option>
               <option value="staff_logistica">Jefe de Taller & Alistamiento</option>
@@ -410,42 +505,42 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Correo Electrónico *</label>
-            <input type="email" id="usr-email" required placeholder="juan.perez@email.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+            <label class="lbl">Correo Electrónico *</label>
+            <input type="email" id="usr-email" required placeholder="juan.perez@email.com" class="fld">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Cédula / Documento</label>
-            <input type="text" id="usr-doc" placeholder="Ej. 1029384756" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+            <label class="lbl">Cédula / Documento</label>
+            <input type="text" id="usr-doc" placeholder="Ej. 1029384756" class="fld">
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Contraseña Inicial *</label>
-            <input type="text" id="usr-password" value="Almotores2024*" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold">
+            <label class="lbl">Contraseña Inicial *</label>
+            <input type="text" id="usr-password" value="Almotores2024*" required class="fld font-mono font-bold">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Asignar Vehículo (Opcional)</label>
-            <select id="usr-vehicle-id" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+            <label class="lbl">Asignar Vehículo (Opcional)</label>
+            <select id="usr-vehicle-id" class="fld">
               <option value="">Ninguno</option>
             </select>
           </div>
         </div>
 
         <div class="pt-2 flex items-center gap-2">
-          <input type="checkbox" id="usr-must-change" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-          <label for="usr-must-change" class="text-xs text-slate-600 select-none">
+          <input type="checkbox" id="usr-must-change" checked class="rounded border-white/20 bg-white/10 text-blue-500 focus:ring-blue-500">
+          <label for="usr-must-change" class="text-xs text-slate-300 select-none">
             Exigir cambio de contraseña en el primer inicio de sesión
           </label>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-          <button type="button" onclick="closeCreateUserModal()" class="px-4 py-2 bg-slate-100 text-slate-600 text-xs font-bold rounded-xl hover:bg-slate-200 transition">
+        <div class="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeCreateUserModal()" class="px-4 py-2.5 bg-white/10 text-slate-200 text-xs font-bold rounded-xl hover:bg-white/15 transition">
             Cancelar
           </button>
-          <button type="submit" id="btn-save-user" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5">
+          <button type="submit" id="btn-save-user" class="btn-brand px-5 py-2.5 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
             <i class="fa-solid fa-user-check"></i>
             <span>Crear Usuario</span>
           </button>

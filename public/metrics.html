@@ -7,11 +7,101 @@
   <link rel="stylesheet" href="/css/styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+  <style>
+    /* ===== FONDO PROFESIONAL (igual que gestion.html y admin.html) ===== */
+    body {
+      font-family: 'Manrope', sans-serif;
+      background-color: #070f1d;
+      background-image:
+        radial-gradient(900px 500px at 12% -5%, rgba(51,117,250,.18), transparent 60%),
+        radial-gradient(800px 500px at 100% 10%, rgba(99,102,241,.12), transparent 60%),
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(180deg, #0b1830 0%, #070f1d 100%);
+      background-size: auto, auto, 40px 40px, 40px 40px, auto;
+      background-attachment: fixed;
+    }
+
+    /* ===== PANELES OSCUROS ===== */
+    .cardd { background: linear-gradient(135deg, #1a202c, #0b0e14); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04); }
+    .btn-brand { background: linear-gradient(135deg, #3375fa, #1e5fe8); color: #fff; box-shadow: 0 10px 22px rgba(43,109,243,.28); }
+    .btn-brand:hover { filter: brightness(1.1); }
+
+    /* ===== TARJETAS DE INDICADORES (KPI) ===== */
+    .kpi-card {
+      position: relative; overflow: hidden; padding: 1.5rem; border-radius: 1.5rem;
+      background: linear-gradient(145deg, #17243d 0%, #0b1325 100%);
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 18px 36px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05);
+      transition: transform .2s ease, border-color .2s ease;
+    }
+    .kpi-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--accent), transparent 85%); }
+    .kpi-card::after { content: ""; position: absolute; right: -40px; top: -40px; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%); pointer-events: none; }
+    .kpi-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+    .kpi-card > * { position: relative; z-index: 1; }
+    .kpi-label { font-size: .8125rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #e2e8f0; }
+    .kpi-icon {
+      width: 2.75rem; height: 2.75rem; border-radius: .9rem; display: flex; align-items: center; justify-content: center;
+      font-size: 1.05rem; color: #fff;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 80%, #000), color-mix(in srgb, var(--accent) 50%, #000));
+      border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+      box-shadow: 0 4px 10px rgba(0,0,0,.35); opacity: .95;
+    }
+    .kpi-value { margin-top: .75rem; font-size: 2.25rem; line-height: 1.1; font-weight: 800; color: #fff; letter-spacing: -.02em; }
+    .kpi-note { margin-top: .6rem; font-size: .875rem; font-weight: 600; line-height: 1.2rem; }
+    @media (prefers-reduced-motion: reduce) { .kpi-card { transition: none; } .kpi-card:hover { transform: none; } }
+
+    /* ===== TABLA DE VEHÍCULOS CON ALERTA: información más legible ===== */
+    .metrics-table thead th { font-size: .8125rem; padding-top: 1.1rem; padding-bottom: 1.1rem; }
+    #delayed-table-body { font-size: .9375rem; }
+    #delayed-table-body td { padding-top: 1.1rem; padding-bottom: 1.1rem; }
+    #delayed-table-body .text-xs { font-size: .9375rem; line-height: 1.35rem; }
+    #delayed-table-body .text-\[11px\] { font-size: .8125rem; line-height: 1.2rem; }
+    #delayed-table-body .text-\[10px\] { font-size: .75rem; line-height: 1.1rem; }
+    #delayed-table-body .font-mono { font-size: .875rem; }
+
+    /* ===== ESTADO ALERTA: texto blanco sobre el rojo ===== */
+    #delayed-table-body td:last-child,
+    #delayed-table-body td:last-child * { color: #fff !important; }
+    #delayed-table-body td:last-child [class*="bg-rose"],
+    #delayed-table-body td:last-child [class*="bg-red"] {
+      background-color: #e11d48 !important;
+      border-color: rgba(255,255,255,.25) !important;
+      font-weight: 700;
+    }
+
+    /* Adapta el contenido que dibuja app-metrics.js (pensado para fondo claro) */
+    .at-dark { color-scheme: dark; }
+    .at-dark .text-slate-900, .at-dark .text-slate-800, .at-dark .text-slate-700, .at-dark .text-gray-900, .at-dark .text-gray-800, .at-dark .text-gray-700 { color: #f1f5f9; }
+    .at-dark .text-slate-600, .at-dark .text-slate-500, .at-dark .text-gray-600, .at-dark .text-gray-500 { color: #94a3b8; }
+    .at-dark .text-blue-600, .at-dark .text-blue-700, .at-dark .text-blue-800 { color: #93c5fd; }
+    .at-dark .text-indigo-600, .at-dark .text-indigo-700, .at-dark .text-indigo-800 { color: #a5b4fc; }
+    .at-dark .text-purple-600, .at-dark .text-purple-700, .at-dark .text-purple-800 { color: #d8b4fe; }
+    .at-dark .text-emerald-600, .at-dark .text-emerald-700, .at-dark .text-emerald-800, .at-dark .text-green-600, .at-dark .text-green-700 { color: #6ee7b7; }
+    .at-dark .text-amber-600, .at-dark .text-amber-700, .at-dark .text-amber-800, .at-dark .text-orange-600 { color: #fcd34d; }
+    .at-dark .text-rose-600, .at-dark .text-rose-700, .at-dark .text-red-600, .at-dark .text-red-700 { color: #fda4af; }
+    .at-dark .bg-white, .at-dark .bg-slate-50, .at-dark .bg-slate-100, .at-dark .bg-gray-50, .at-dark .bg-gray-100 { background-color: rgba(255,255,255,.05); }
+    .at-dark .bg-slate-200, .at-dark .bg-slate-300, .at-dark .bg-gray-200, .at-dark .bg-gray-300 { background-color: rgba(255,255,255,.14); }
+    .at-dark .bg-blue-50, .at-dark .bg-blue-100 { background-color: rgba(59,130,246,.16); }
+    .at-dark .bg-indigo-50, .at-dark .bg-indigo-100 { background-color: rgba(99,102,241,.16); }
+    .at-dark .bg-purple-50, .at-dark .bg-purple-100 { background-color: rgba(168,85,247,.16); }
+    .at-dark .bg-emerald-50, .at-dark .bg-emerald-100, .at-dark .bg-green-50, .at-dark .bg-green-100 { background-color: rgba(16,185,129,.16); }
+    .at-dark .bg-amber-50, .at-dark .bg-amber-100, .at-dark .bg-orange-50 { background-color: rgba(245,158,11,.16); }
+    .at-dark .bg-rose-50, .at-dark .bg-rose-100, .at-dark .bg-red-50, .at-dark .bg-red-100 { background-color: rgba(244,63,94,.16); }
+    .at-dark .border-slate-100, .at-dark .border-slate-200, .at-dark .border-slate-300, .at-dark .border-gray-100, .at-dark .border-gray-200 { border-color: rgba(255,255,255,.1); }
+    .at-dark .border-blue-100, .at-dark .border-blue-200, .at-dark .border-indigo-100, .at-dark .border-indigo-200 { border-color: rgba(96,165,250,.28); }
+    .at-dark .border-emerald-100, .at-dark .border-emerald-200 { border-color: rgba(52,211,153,.28); }
+    .at-dark .border-amber-100, .at-dark .border-amber-200 { border-color: rgba(251,191,36,.28); }
+    .at-dark .border-rose-100, .at-dark .border-rose-200 { border-color: rgba(251,113,133,.28); }
+    .at-dark .divide-slate-100 > * + *, .at-dark .divide-slate-200 > * + * { border-color: rgba(255,255,255,.1); }
+    .at-dark tbody tr:hover { background-color: rgba(255,255,255,.04) !important; }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-100 text-slate-800 antialiased">
+<body class="min-h-screen flex flex-col text-slate-100 antialiased">
 
   <!-- Header Protegido Aislado Staff -->
-  <header class="bg-indigo-950 text-white sticky top-0 z-40 shadow-md">
+  <header class="bg-[#091426] text-white sticky top-0 z-40 border-b border-white/[0.07]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a href="/admin.html" class="flex items-center" aria-label="AutoTrack, ir al panel operativo">
@@ -19,18 +109,18 @@
         </a>
         <div class="border-l border-white/20 pl-3">
           <span class="text-sm font-bold tracking-tight text-white leading-tight block">Métricas UX</span>
-          <span class="text-[11px] text-indigo-300 font-mono block">Dashboard Staff</span>
+          <span class="text-xs text-slate-200 font-mono block">Dashboard Staff</span>
         </div>
       </div>
       <div class="flex items-center space-x-3">
-        <a href="/gestion.html" class="px-3 py-1.5 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white shadow-sm transition flex items-center gap-1.5">
+        <a href="/gestion.html" class="btn-brand px-3 py-1.5 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
           <i class="fa-solid fa-layer-group"></i> Gestión
         </a>
 
-        <a href="/admin.html" class="px-3 py-1.5 text-xs font-semibold bg-indigo-900 hover:bg-indigo-800 rounded-xl text-indigo-200 transition">
+        <a href="/admin.html" class="px-3 py-1.5 text-xs font-semibold bg-white/5 hover:bg-white/10 rounded-xl text-blue-200 border border-white/10 transition">
           <i class="fa-solid fa-user-gear mr-1"></i> Panel Operativo Staff
         </a>
-        <button onclick="logoutAdmin()" class="px-3 py-1.5 text-xs font-semibold bg-rose-900/60 hover:bg-rose-800 rounded-xl text-rose-200 border border-rose-800 transition">
+        <button onclick="logoutAdmin()" class="px-3 py-1.5 text-xs font-semibold bg-rose-950/60 hover:bg-rose-900 rounded-xl text-rose-200 border border-rose-800/70 transition">
           <i class="fa-solid fa-right-from-bracket mr-1"></i> Salir Staff
         </button>
       </div>
@@ -40,17 +130,17 @@
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
     
     <!-- Title Banner -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+    <div class="cardd flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl">
       <div>
-        <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 inline-block mb-2">
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/15 text-blue-300 border border-blue-400/20 inline-block mb-2">
           Análisis de Impacto UX
         </span>
-        <h1 class="text-2xl font-black text-slate-900">Métricas de Rendimiento y Experiencia de Entrega</h1>
-        <p class="text-xs text-slate-500 mt-1">Monitoreo continuo de tiempos por etapa, cuellos de botella y satisfacción del comprador.</p>
+        <h1 class="text-2xl font-black text-white">Métricas de Rendimiento y Experiencia de Entrega</h1>
+        <p class="text-sm text-slate-200 mt-1">Monitoreo continuo de tiempos por etapa, cuellos de botella y satisfacción del comprador.</p>
       </div>
 
       <div class="flex items-center gap-3">
-        <button onclick="loadMetrics()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm transition flex items-center gap-2">
+        <button onclick="loadMetrics()" class="btn-brand px-4 py-2 text-xs font-semibold rounded-xl transition flex items-center gap-2">
           <i class="fa-solid fa-arrows-rotate"></i> Actualizar Métricas
         </button>
       </div>
@@ -58,61 +148,61 @@
 
     <!-- KPIs Row -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div class="kpi-card" style="--accent: #3b82f6;">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Entrega Autos</span>
-          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+          <span class="kpi-label">Entrega Autos</span>
+          <div class="kpi-icon">
             <i class="fa-solid fa-car"></i>
           </div>
         </div>
-        <h3 class="text-3xl font-black text-slate-900 mt-2">14 <span class="text-sm font-normal text-slate-500">días prom.</span></h3>
-        <p class="text-[11px] text-emerald-600 mt-2 font-semibold">
+        <h3 class="kpi-value">14 <span class="text-base font-normal text-slate-200">días prom.</span></h3>
+        <p class="kpi-note text-emerald-300">
           <i class="fa-solid fa-arrow-down mr-1"></i> Reducción del 35% de incertidumbre
         </p>
       </div>
 
-      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div class="kpi-card" style="--accent: #06b6d4;">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Entrega Motos</span>
-          <div class="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center">
+          <span class="kpi-label">Entrega Motos</span>
+          <div class="kpi-icon">
             <i class="fa-solid fa-motorcycle"></i>
           </div>
         </div>
-        <h3 class="text-3xl font-black text-slate-900 mt-2">6 <span class="text-sm font-normal text-slate-500">días prom.</span></h3>
-        <p class="text-[11px] text-emerald-600 mt-2 font-semibold">
+        <h3 class="kpi-value">6 <span class="text-base font-normal text-slate-200">días prom.</span></h3>
+        <p class="kpi-note text-emerald-300">
           <i class="fa-solid fa-circle-check mr-1"></i> Dentro del estándar 3-30 días
         </p>
       </div>
 
-      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div class="kpi-card" style="--accent: #f59e0b;">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Satisfacción Cliente</span>
-          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+          <span class="kpi-label">Satisfacción Cliente</span>
+          <div class="kpi-icon">
             <i class="fa-solid fa-star"></i>
           </div>
         </div>
-        <h3 id="metric-satisfaction" class="text-3xl font-black text-slate-900 mt-2">4.9 / 5.0</h3>
-        <p class="text-[11px] text-slate-400 mt-2 font-semibold">Evaluación post-entrega</p>
+        <h3 id="metric-satisfaction" class="kpi-value">4.9 / 5.0</h3>
+        <p class="kpi-note text-slate-200">Evaluación post-entrega</p>
       </div>
 
-      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div class="kpi-card" style="--accent: #f43f5e;">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Alertas de Retraso</span>
-          <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+          <span class="kpi-label">Alertas de Retraso</span>
+          <div class="kpi-icon">
             <i class="fa-solid fa-triangle-exclamation"></i>
           </div>
         </div>
-        <h3 id="metric-delayed" class="text-3xl font-black text-rose-600 mt-2">0</h3>
-        <p class="text-[11px] text-slate-400 mt-2 font-semibold">Superan tiempo estimado</p>
+        <h3 id="metric-delayed" class="kpi-value text-rose-300">0</h3>
+        <p class="kpi-note text-slate-200">Superan tiempo estimado</p>
       </div>
     </div>
 
     <!-- Stage Distribution Bar Chart Grid -->
-    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+    <div class="at-dark cardd p-6 sm:p-8 rounded-3xl">
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h3 class="text-lg font-bold text-slate-900">Distribución de Vehículos por Etapa de Operación</h3>
-          <p class="text-xs text-slate-500">Permite detectar cuellos de botella en alistamiento o documentación.</p>
+          <h3 class="text-lg font-bold text-white">Distribución de Vehículos por Etapa de Operación</h3>
+          <p class="text-sm text-slate-200">Permite detectar cuellos de botella en alistamiento o documentación.</p>
         </div>
       </div>
 
@@ -122,14 +212,14 @@
     </div>
 
     <!-- Delayed Vehicles Table -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
-      <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-clock text-amber-500"></i> Vehículos Requiriendo Atención Prioritaria
+    <div class="at-dark cardd rounded-3xl p-6">
+      <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-clock text-amber-300"></i> Vehículos Requiriendo Atención Prioritaria
       </h3>
       <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+        <table class="metrics-table w-full text-left border-collapse">
           <thead>
-            <tr class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+            <tr class="bg-white/5 text-slate-200 text-[11px] font-bold uppercase tracking-wider border-b border-white/10">
               <th class="py-3 px-4">ID</th>
               <th class="py-3 px-4">Cliente</th>
               <th class="py-3 px-4">Modelo</th>
@@ -138,7 +228,7 @@
               <th class="py-3 px-4 text-right">Estado Alerta</th>
             </tr>
           </thead>
-          <tbody id="delayed-table-body" class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
+          <tbody id="delayed-table-body" class="divide-y divide-white/10 text-sm font-medium text-slate-200">
             <!-- Rendered by JS -->
           </tbody>
         </table>

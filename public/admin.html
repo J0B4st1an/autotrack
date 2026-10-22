@@ -7,11 +7,65 @@
   <link rel="stylesheet" href="/css/styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+  <style>
+    /* ===== FONDO PROFESIONAL (ajustado) ===== */
+    body {
+      font-family: 'Manrope', sans-serif;
+      background-color: #070f1d;
+      background-image:
+        /* luces suaves de color */
+        radial-gradient(900px 500px at 12% -5%, rgba(51,117,250,.18), transparent 60%),
+        radial-gradient(800px 500px at 100% 10%, rgba(99,102,241,.12), transparent 60%),
+        /* cuadrícula sutil */
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+        /* base degradada */
+        linear-gradient(180deg, #0b1830 0%, #070f1d 100%);
+      background-size: auto, auto, 40px 40px, 40px 40px, auto;
+      background-attachment: fixed;
+    }
+
+    /* ===== TARJETAS DE RESUMEN ===== */
+    .stat-card {
+      position: relative; overflow: hidden; padding: 1.25rem; border-radius: 1.25rem;
+      background: linear-gradient(145deg, #17243d 0%, #0b1325 100%);
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 18px 36px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05);
+      display: flex; align-items: center; justify-content: space-between;
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+    .stat-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--accent), transparent 85%); }
+    .stat-card::after { content: ""; position: absolute; right: -40px; top: -40px; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%); pointer-events: none; }
+    .stat-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 24px 44px rgba(0,0,0,.5); }
+    .stat-body { position: relative; z-index: 1; }
+    .stat-label { font-size: .75rem; font-weight: 600; color: #94a3b8; }
+    .stat-value { margin-top: .25rem; font-size: 2.25rem; line-height: 1; font-weight: 800; color: #fff; letter-spacing: -.02em; }
+    .stat-icon {
+      position: relative; z-index: 1; width: 3rem; height: 3rem; border-radius: .9rem;
+      display: flex; align-items: center; justify-content: center; font-size: 1.15rem; color: #fff;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 80%, #000), color-mix(in srgb, var(--accent) 50%, #000));
+      box-shadow: 0 4px 10px rgba(0,0,0,.35);
+      border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+      opacity: .95;
+    }
+    @media (prefers-reduced-motion: reduce) { .stat-card { transition: none; } .stat-card:hover { transform: none; } }
+
+    /* ===== TABLA DE VEHÍCULOS: información más legible ===== */
+    #vehicles-table-body { font-size: .9375rem; }
+    #vehicles-table-body td { padding-top: 1.1rem; padding-bottom: 1.1rem; }
+    #vehicles-table-body .text-xs { font-size: .9375rem; line-height: 1.35rem; }
+    #vehicles-table-body .text-\[11px\] { font-size: .8125rem; line-height: 1.2rem; }
+    #vehicles-table-body .text-\[10px\] { font-size: .75rem; line-height: 1.1rem; }
+    #vehicles-table-body select, #vehicles-table-body button { font-size: .8125rem; }
+    #vehicles-table-body .font-mono { font-size: .875rem; }
+    .vehicles-table thead th { font-size: .75rem; padding-top: 1.1rem; padding-bottom: 1.1rem; }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-100 text-slate-800 antialiased">
+<body class="min-h-screen flex flex-col text-[#10213f] antialiased">
 
   <!-- Header Protegido Aislado (Sin navegación a Cliente) -->
-  <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+  <header class="bg-[#091426] text-white sticky top-0 z-40 border-b border-white/[0.07]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a href="/admin.html" class="flex items-center" aria-label="AutoTrack, panel operativo">
@@ -24,20 +78,20 @@
       </div>
 
       <div class="flex items-center space-x-3">
-        <a href="/gestion.html" class="px-3 py-1.5 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white shadow-sm transition flex items-center gap-1.5">
+        <a href="/gestion.html" class="px-3 py-1.5 text-xs font-semibold bg-gradient-to-br from-[#3375fa] to-[#1e5fe8] hover:brightness-110 rounded-xl text-white shadow-md shadow-blue-500/25 transition flex items-center gap-1.5">
           <i class="fa-solid fa-layer-group"></i> Gestión
         </a>
 
-        <a href="/metrics.html" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 rounded-xl text-indigo-200 border border-slate-700 transition">
+        <a href="/metrics.html" class="px-3 py-1.5 text-xs font-semibold bg-white/5 hover:bg-white/10 rounded-xl text-blue-200 border border-white/10 transition">
           <i class="fa-solid fa-chart-pie mr-1"></i> Métricas UX
         </a>
 
-        <div class="flex items-center space-x-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
-          <i class="fa-solid fa-user-shield text-xs text-indigo-400"></i>
+        <div class="flex items-center space-x-2 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10">
+          <i class="fa-solid fa-user-shield text-xs text-blue-300"></i>
           <span id="admin-user-display" class="text-xs font-bold text-slate-200">Staff</span>
         </div>
 
-        <button onclick="logoutAdmin()" class="px-3 py-1.5 text-xs font-semibold bg-rose-900/60 hover:bg-rose-800 rounded-xl text-rose-200 border border-rose-800 transition">
+        <button onclick="logoutAdmin()" class="px-3 py-1.5 text-xs font-semibold bg-rose-950/60 hover:bg-rose-900 rounded-xl text-rose-200 border border-rose-800/70 transition">
           <i class="fa-solid fa-right-from-bracket mr-1"></i> Salir Staff
         </button>
       </div>
@@ -45,45 +99,45 @@
   </header>
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-    
+
     <!-- Top Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-slate-500">Vehículos en Alistamiento</p>
-          <h3 id="stat-active" class="text-2xl font-black text-slate-900 mt-1">0</h3>
+      <div class="stat-card" style="--accent: #3b82f6;">
+        <div class="stat-body">
+          <p class="stat-label">Vehículos en Alistamiento</p>
+          <h3 id="stat-active" class="stat-value">0</h3>
         </div>
-        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
+        <div class="stat-icon">
           <i class="fa-solid fa-wrench"></i>
         </div>
       </div>
 
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-slate-500">Listos para Entrega</p>
-          <h3 id="stat-ready" class="text-2xl font-black text-emerald-600 mt-1">0</h3>
+      <div class="stat-card" style="--accent: #10b981;">
+        <div class="stat-body">
+          <p class="stat-label">Listos para Entrega</p>
+          <h3 id="stat-ready" class="stat-value">0</h3>
         </div>
-        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
-          <i class="fa-solid fa-sparkles"></i>
+        <div class="stat-icon">
+          <i class="fa-solid fa-circle-check"></i>
         </div>
       </div>
 
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-slate-500">Cuentas Registradas</p>
-          <h3 id="stat-users" class="text-2xl font-black text-indigo-600 mt-1">0</h3>
+      <div class="stat-card" style="--accent: #6366f1;">
+        <div class="stat-body">
+          <p class="stat-label">Cuentas Registradas</p>
+          <h3 id="stat-users" class="stat-value">0</h3>
         </div>
-        <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl">
+        <div class="stat-icon">
           <i class="fa-solid fa-users"></i>
         </div>
       </div>
 
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-slate-500">Alertas de Retraso</p>
-          <h3 id="stat-delayed" class="text-2xl font-black text-amber-600 mt-1">0</h3>
+      <div class="stat-card" style="--accent: #f59e0b;">
+        <div class="stat-body">
+          <p class="stat-label">Alertas de Retraso</p>
+          <h3 id="stat-delayed" class="stat-value">0</h3>
         </div>
-        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
+        <div class="stat-icon">
           <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
       </div>
@@ -100,21 +154,21 @@
       </button>
     </div>
 
-    <!-- Controls & Filters Bar -->
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
-      <div class="relative w-full md:w-80">
+    <!-- Controls & Filters Bar (resaltada en azul de marca) -->
+    <div class="bg-gradient-to-r from-[#1e5fe8] to-[#2b6df3] p-4 rounded-2xl border border-white/20 shadow-xl shadow-blue-950/40 flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div class="relative w-full md:w-96">
         <input 
           type="text" 
           id="admin-search-input" 
           placeholder="Buscar por cliente, VIN, cédula..." 
-          class="w-full pl-10 pr-4 py-2 bg-slate-50 rounded-xl text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          class="w-full pl-11 pr-4 py-3 bg-white text-slate-800 placeholder-slate-400 rounded-xl text-sm font-medium shadow-lg shadow-blue-950/20 border-2 border-transparent focus:outline-none focus:border-[#091426]/30 focus:ring-4 focus:ring-white/30"
           onkeyup="filterVehicles()"
         />
-        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+        <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-[#2b6df3] text-sm"></i>
       </div>
 
       <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
-        <select id="filter-stage" onchange="filterVehicles()" class="px-3 py-2 bg-slate-50 rounded-xl text-xs font-semibold border border-slate-200">
+        <select id="filter-stage" onchange="filterVehicles()" class="px-3 py-3 bg-white text-slate-700 rounded-xl text-xs font-bold shadow-lg shadow-blue-950/20 border-2 border-transparent focus:outline-none focus:ring-4 focus:ring-white/30">
           <option value="">Todas las etapas (1 - 7)</option>
           <option value="1">1. Proceso de Asignación</option>
           <option value="2">2. En Transporte</option>
@@ -125,18 +179,18 @@
           <option value="7">7. Entregado</option>
         </select>
 
-        <button onclick="openNewVehicleModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-md transition flex items-center gap-1.5">
+        <button onclick="openNewVehicleModal()" class="px-4 py-3 bg-[#091426] hover:bg-[#0d1d38] text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-950/30 transition flex items-center gap-1.5">
           <i class="fa-solid fa-user-plus"></i> Registrar Cliente y Pedido
         </button>
       </div>
     </div>
 
     <!-- Vehicles Table -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-3xl border border-slate-300/70 shadow-lg shadow-slate-900/10 overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+        <table class="vehicles-table w-full text-left border-collapse">
           <thead>
-            <tr class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+            <tr class="bg-[#eaf0fa] text-slate-600 text-[11px] font-extrabold uppercase tracking-wider border-b border-slate-300">
               <th class="py-4 px-6">ID & Pedido</th>
               <th class="py-4 px-6">Cliente & Documento</th>
               <th class="py-4 px-6">Vehículo & VIN</th>
@@ -144,7 +198,7 @@
               <th class="py-4 px-6 text-right">Notificación Cliente</th>
             </tr>
           </thead>
-          <tbody id="vehicles-table-body" class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
+          <tbody id="vehicles-table-body" class="divide-y divide-slate-200 text-sm font-medium text-slate-700">
             <!-- Rendered by JS -->
           </tbody>
         </table>
@@ -154,11 +208,12 @@
   </main>
 
   <!-- Modal: Registrar Nuevo Cliente & Pedido -->
-  <div id="new-vehicle-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
-        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-user-plus text-indigo-600"></i> Registrar Nuevo Cliente y Pedido
+  <div id="new-vehicle-modal" class="hidden fixed inset-0 z-50 bg-[#091426]/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+        <h3 class="font-extrabold text-base text-[#0c1930] flex items-center gap-2">
+          <span class="w-8 h-8 rounded-xl bg-blue-50 text-[#2b6df3] flex items-center justify-center text-sm"><i class="fa-solid fa-user-plus"></i></span>
+          Registrar Nuevo Cliente y Pedido
         </h3>
         <button onclick="closeNewVehicleModal()" class="text-slate-400 hover:text-slate-600">
           <i class="fa-solid fa-xmark"></i>
@@ -168,45 +223,45 @@
       <form id="create-vehicle-form" onsubmit="handleCreateVehicle(event)" class="py-4 space-y-4">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Cédula Cliente *</label>
-            <input type="text" id="new-doc" required placeholder="Ej. 1098765432" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Cédula Cliente *</label>
+            <input type="text" id="new-doc" required placeholder="Ej. 1098765432" class="w-full px-3 py-2.5 bg-[#f4f7fc] border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-4 focus:ring-blue-500/15 focus:border-blue-400 focus:bg-white">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo *</label>
-            <input type="text" id="new-name" required placeholder="Ej. Juan Pérez" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Correo Electrónico (Requerido para clave) *</label>
-            <input type="email" id="new-email" required placeholder="juan.perez@email.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono / Celular</label>
-            <input type="text" id="new-phone" placeholder="+57 300 123 4567" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nombre Completo *</label>
+            <input type="text" id="new-name" required placeholder="Ej. Juan Pérez" class="w-full px-3 py-2.5 bg-[#f4f7fc] border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-4 focus:ring-blue-500/15 focus:border-blue-400 focus:bg-white">
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Tipo de Vehículo</label>
-            <select id="new-type" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Correo Electrónico (Requerido para clave) *</label>
+            <input type="email" id="new-email" required placeholder="juan.perez@email.com" class="w-full px-3 py-2.5 bg-[#f4f7fc] border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-4 focus:ring-blue-500/15 focus:border-blue-400 focus:bg-white">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Teléfono / Celular</label>
+            <input type="text" id="new-phone" placeholder="+57 300 123 4567" class="w-full px-3 py-2.5 bg-[#f4f7fc] border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-4 focus:ring-blue-500/15 focus:border-blue-400 focus:bg-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Tipo de Vehículo</label>
+            <select id="new-type" class="w-full px-3 py-2.5 bg-[#f4f7fc] border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-4 focus:ring-blue-500/15 focus:border-blue-400">
               <option value="Automóvil">Automóvil</option>
               <option value="Motocicleta">Motocicleta</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Marca y Modelo *</label>
-            <input type="text" id="new-model" required placeholder="Ej. Nissan Kicks 2024" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Marca y Modelo *</label>
+            <input type="text" id="new-model" required placeholder="Ej. Nissan Kicks 2024" class="w-full px-3 py-2.5 bg-[#f4f7fc] border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-4 focus:ring-blue-500/15 focus:border-blue-400 focus:bg-white">
           </div>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
-          <button type="button" onclick="closeNewVehicleModal()" class="px-4 py-2 bg-slate-100 text-slate-600 text-xs font-semibold rounded-xl hover:bg-slate-200">
+        <div class="pt-3 border-t border-slate-200 flex justify-end gap-2">
+          <button type="button" onclick="closeNewVehicleModal()" class="px-4 py-2.5 bg-slate-100 text-slate-600 text-xs font-semibold rounded-xl hover:bg-slate-200 transition">
             Cancelar
           </button>
-          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl hover:bg-indigo-700 shadow-sm">
+          <button type="submit" class="px-4 py-2.5 bg-gradient-to-br from-[#3375fa] to-[#1e5fe8] hover:brightness-110 text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-500/25 transition">
             Guardar y Enviar Correo al Cliente
           </button>
         </div>
