@@ -7,7 +7,9 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "test": "node test-api.js",
-    "seed": "node database/seed.js"
+    "seed": "node database/seed.js",
+    "test:postgres": "node test-postgres.js",
+    "migrate:json": "node database/migrate-json.js"
   },
   "keywords": [
     "ux",
@@ -23,6 +25,8 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "multer": "^2.4.0",
-    "nodemailer": "^10.0.15"
+    "nodemailer": "^10.0.15",
+    "pg": "^8.13.1",
+    "express-async-errors": "^3.1.1"
   }
 }

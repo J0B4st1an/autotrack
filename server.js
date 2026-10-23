@@ -1,3 +1,4 @@
+require('express-async-errors');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -51,18 +52,18 @@ app.use((req, res, next) => {
 // --- ROUTER DE AUTENTICACIÓN UNIFICADA ---
 
 // Endpoint Único de Login (Soporta Clientes y Staff por Rol)
-app.post('/api/auth/login', (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({ success: false, message: "Ingresa tu usuario/correo y contraseña." });
   }
 
-  const user = db.authenticateUser(username, password);
+  const user = await db.authenticateUser(username, password);
   if (!user) {
     return res.status(401).json({ success: false, message: "Usuario o contraseña incorrectos." });
   }
 
-  const vehicle = user.vehicle_id ? db.getUserVehicle(user.vehicle_id) : null;
+  const vehicle = user.vehicle_id ? await db.getUserVehicle(user.vehicle_id) : null;
 
   res.json({
     success: true,
@@ -81,13 +82,13 @@ app.post('/api/auth/login', (req, res) => {
 });
 
 // Endpoint de Login Administrativo (Alias para compatibilidad)
-app.post('/api/auth/admin-login', (req, res) => {
+app.post('/api/auth/admin-login', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({ success: false, message: "Ingresa usuario y contraseña." });
   }
 
-  const user = db.authenticateUser(username, password);
+  const user = await db.authenticateUser(username, password);
   if (!user || user.role === 'client') {
     return res.status(401).json({ success: false, message: "Credenciales administrativas incorrectas." });
   }
@@ -106,7 +107,7 @@ app.post('/api/auth/admin-login', (req, res) => {
 });
 
 // Cambio Obligatorio de Contraseña (Primer Ingreso Cliente)
-app.post('/api/auth/change-password', (req, res) => {
+app.post('/api/auth/change-password', async (req, res) => {
   const { userId, oldPassword, newPassword } = req.body;
   if (!userId || !oldPassword || !newPassword) {
     return res.status(400).json({ success: false, message: "Todos los campos son requeridos." });
@@ -116,7 +117,7 @@ app.post('/api/auth/change-password', (req, res) => {
     return res.status(400).json({ success: false, message: "La nueva contraseña debe tener al menos 6 caracteres." });
   }
 
-  const result = db.changePassword(userId, oldPassword, newPassword);
+  const result = await db.changePassword(userId, oldPassword, newPassword);
   if (!result.success) {
     return res.status(400).json(result);
   }
@@ -129,13 +130,13 @@ app.post('/api/auth/change-password', (req, res) => {
 });
 
 // Endpoint Exclusivo del Cliente (Su vehículo asignado)
-app.get('/api/client/my-vehicle', (req, res) => {
+app.get('/api/client/my-vehicle', async (req, res) => {
   const vehicleId = req.query.vehicle_id;
   if (!vehicleId) {
     return res.status(400).json({ success: false, message: "Se requiere vehicle_id de sesión." });
   }
 
-  const vehicle = db.getUserVehicle(vehicleId);
+  const vehicle = await db.getUserVehicle(vehicleId);
   if (!vehicle) {
     return res.status(404).json({ success: false, message: "Vehículo no encontrado." });
   }
@@ -156,16 +157,16 @@ app.get('/api/client/my-vehicle', (req, res) => {
 
 // --- API OPERATIVA Y ADMINISTRATIVA ---
 
-app.get('/api/stages', (req, res) => {
+app.get('/api/stages', async (req, res) => {
   res.json({ success: true, stages: db.getStages() });
 });
 
-app.get('/api/users', (req, res) => {
-  res.json({ success: true, users: db.getAllUsers() });
+app.get('/api/users', async (req, res) => {
+  res.json({ success: true, users: await db.getAllUsers() });
 });
 
-app.get('/api/vehicles', (req, res) => {
-  let vehicles = db.getAllVehicles();
+app.get('/api/vehicles', async (req, res) => {
+  let vehicles = await db.getAllVehicles();
   const { stage, type, search } = req.query;
 
   if (stage) vehicles = vehicles.filter(v => v.current_stage_index === parseInt(stage));
@@ -184,7 +185,7 @@ app.get('/api/vehicles', (req, res) => {
 });
 
 // Subida de imagen a la carpeta /public/img
-app.post('/api/upload-image', (req, res) => {
+app.post('/api/upload-image', async (req, res) => {
   upload.single('image')(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ success: false, message: `Error de subida: ${err.message}` });
@@ -207,13 +208,13 @@ app.post('/api/upload-image', (req, res) => {
 });
 
 // Creación de Usuario Independiente
-app.post('/api/users', (req, res) => {
+app.post('/api/users', async (req, res) => {
   const { username, email } = req.body;
   if (!username || !email) {
     return res.status(400).json({ success: false, message: "Nombre de usuario y correo son obligatorios." });
   }
 
-  const result = db.createUser(req.body);
+  const result = await db.createUser(req.body);
   if (!result.success) {
     return res.status(400).json(result);
   }
@@ -226,8 +227,8 @@ app.post('/api/users', (req, res) => {
 });
 
 // Eliminación de Usuario
-app.delete('/api/users/:id', (req, res) => {
-  const result = db.deleteUser(req.params.id);
+app.delete('/api/users/:id', async (req, res) => {
+  const result = await db.deleteUser(req.params.id);
   if (!result.success) {
     return res.status(400).json(result);
   }
@@ -235,8 +236,8 @@ app.delete('/api/users/:id', (req, res) => {
 });
 
 // Eliminación de Vehículo
-app.delete('/api/vehicles/:id', (req, res) => {
-  const result = db.deleteVehicle(req.params.id);
+app.delete('/api/vehicles/:id', async (req, res) => {
+  const result = await db.deleteVehicle(req.params.id);
   if (!result.success) {
     return res.status(400).json(result);
   }
@@ -244,8 +245,8 @@ app.delete('/api/vehicles/:id', (req, res) => {
 });
 
 // Actualización de Vehículo
-app.put('/api/vehicles/:id', (req, res) => {
-  const updated = db.updateVehicle(req.params.id, req.body);
+app.put('/api/vehicles/:id', async (req, res) => {
+  const updated = await db.updateVehicle(req.params.id, req.body);
   if (!updated) {
     return res.status(404).json({ success: false, message: "Vehículo no encontrado." });
   }
@@ -253,13 +254,13 @@ app.put('/api/vehicles/:id', (req, res) => {
 });
 
 // Creación de Vehículo + Generación Silenciosa de Cliente & Envío de Correo
-app.post('/api/vehicles', (req, res) => {
+app.post('/api/vehicles', async (req, res) => {
   const { client_doc, client_name, brand_model } = req.body;
   if (!client_doc || !client_name || !brand_model) {
     return res.status(400).json({ success: false, message: "Campos requeridos faltantes." });
   }
 
-  const result = db.createVehicle(req.body);
+  const result = await db.createVehicle(req.body);
   res.status(201).json({
     success: true,
     message: "Vehículo registrado exitosamente. Se ha enviado un correo electrónico con las credenciales de acceso al cliente.",
@@ -267,28 +268,28 @@ app.post('/api/vehicles', (req, res) => {
   });
 });
 
-app.patch('/api/vehicles/:id/status', (req, res) => {
+app.patch('/api/vehicles/:id/status', async (req, res) => {
   const { stage_index, notes, updated_by } = req.body;
-  const updatedVehicle = db.updateStatus(req.params.id, stage_index, notes, updated_by);
+  const updatedVehicle = await db.updateStatus(req.params.id, stage_index, notes, updated_by);
   if (!updatedVehicle) {
     return res.status(404).json({ success: false, message: "Vehículo no encontrado." });
   }
   res.json({ success: true, message: `Estado actualizado a: ${updatedVehicle.current_stage_name}`, vehicle: updatedVehicle });
 });
 
-app.put('/api/vehicles/:id/checklist', (req, res) => {
+app.put('/api/vehicles/:id/checklist', async (req, res) => {
   const { item_id, completed } = req.body;
-  const updatedVehicle = db.toggleChecklistItem(req.params.id, item_id, completed);
+  const updatedVehicle = await db.toggleChecklistItem(req.params.id, item_id, completed);
   res.json({ success: true, vehicle: updatedVehicle });
 });
 
-app.post('/api/vehicles/:id/rating', (req, res) => {
-  const updatedVehicle = db.submitRating(req.params.id, req.body.rating);
+app.post('/api/vehicles/:id/rating', async (req, res) => {
+  const updatedVehicle = await db.submitRating(req.params.id, req.body.rating);
   res.json({ success: true, message: "¡Gracias por tu calificación!", vehicle: updatedVehicle });
 });
 
-app.get('/api/metrics', (req, res) => {
-  const vehicles = db.getAllVehicles();
+app.get('/api/metrics', async (req, res) => {
+  const vehicles = await db.getAllVehicles();
   const stages = db.getStages();
 
   const total = vehicles.length;
@@ -322,7 +323,7 @@ app.get('/api/metrics', (req, res) => {
 });
 
 // Fallback SPA -> Redirigir a login.html
-app.get('*', (req, res) => {
+app.get('*', async (req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ success: false, message: "Endpoint no encontrado." });
   }
