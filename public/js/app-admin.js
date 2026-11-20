@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!checkAdminSession()) return;
   await fetchStages();
   await loadData();
+  setupAdminClientAutofill();
 });
 
 function checkAdminSession() {
@@ -88,6 +89,7 @@ async function loadData() {
 
     renderVehiclesTable(allVehicles);
     updateSummaryCards(allVehicles, allUsers);
+    updateAdminClientDatalists();
   } catch (err) {
     console.error('Error al cargar datos:', err);
     alert('No se pudieron cargar los datos de AutoTrack.');
@@ -287,12 +289,114 @@ function filterVehicles() {
   renderVehiclesTable(filtered);
 }
 
+// ===== AUTOCOMPLETADO INTELIGENTE DE CLIENTES =====
+function getKnownClients() {
+  const map = new Map();
+  (allVehicles || []).forEach(v => {
+    const doc = String(v.client_doc || '').trim();
+    if (doc && !map.has(doc)) {
+      map.set(doc, {
+        doc,
+        name: String(v.client_name || '').trim(),
+        email: String(v.client_email || '').trim(),
+        phone: String(v.client_phone || '').trim()
+      });
+    }
+  });
+  (allUsers || []).forEach(u => {
+    const doc = String(u.client_doc || '').trim();
+    if (doc && !map.has(doc)) {
+      map.set(doc, {
+        doc,
+        name: String(u.client_name || u.username || '').trim(),
+        email: String(u.email || '').trim(),
+        phone: ''
+      });
+    }
+  });
+  return Array.from(map.values());
+}
+
+function updateAdminClientDatalists() {
+  const clients = getKnownClients();
+  const docList = document.getElementById('admin-clients-doc-list');
+  const nameList = document.getElementById('admin-clients-name-list');
+
+  if (docList) {
+    docList.innerHTML = clients
+      .map(c => `<option value="${escapeHtml(c.doc)}">${escapeHtml(c.name)}</option>`)
+      .join('');
+  }
+  if (nameList) {
+    nameList.innerHTML = clients
+      .map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.doc)}</option>`)
+      .join('');
+  }
+}
+
+function setupAdminClientAutofill() {
+  const docInput = document.getElementById('new-doc');
+  const nameInput = document.getElementById('new-name');
+  if (!docInput || !nameInput) return;
+
+  const handleMatch = (query, isDoc = true) => {
+    const q = String(query || '').trim().toLowerCase();
+    if (!q || q.length < 3) return;
+
+    const clients = getKnownClients();
+    const found = clients.find(c =>
+      isDoc ? c.doc.toLowerCase() === q : c.name.toLowerCase() === q
+    );
+
+    if (found) {
+      document.getElementById('new-doc').value = found.doc;
+      document.getElementById('new-name').value = found.name;
+      if (found.email) document.getElementById('new-email').value = found.email;
+      if (found.phone) document.getElementById('new-phone').value = found.phone;
+
+      const infoBox = document.getElementById('new-client-autofill-info');
+      const infoText = document.getElementById('new-client-autofill-text');
+      if (infoBox && infoText) {
+        infoText.textContent = `Cliente existente vinculado: ${found.name} (${found.doc})`;
+        infoBox.classList.remove('hidden');
+      }
+    }
+  };
+
+  docInput.addEventListener('input', (e) => handleMatch(e.target.value, true));
+  docInput.addEventListener('change', (e) => handleMatch(e.target.value, true));
+  nameInput.addEventListener('change', (e) => handleMatch(e.target.value, false));
+}
+
+function clearAdminClientAutofill() {
+  document.getElementById('new-doc').value = '';
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-email').value = '';
+  document.getElementById('new-phone').value = '';
+  document.getElementById('new-client-autofill-info')?.classList.add('hidden');
+  document.getElementById('new-doc').focus();
+}
+
 function openNewVehicleModal() {
-  document.getElementById('new-vehicle-modal')?.classList.remove('hidden');
+  try {
+    updateAdminClientDatalists();
+  } catch (err) {
+    console.warn('Error al actualizar lista de clientes:', err);
+  }
+  document.getElementById('new-client-autofill-info')?.classList.add('hidden');
+  const modal = document.getElementById('new-vehicle-modal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+  }
 }
 
 function closeNewVehicleModal() {
-  document.getElementById('new-vehicle-modal')?.classList.add('hidden');
+  const modal = document.getElementById('new-vehicle-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+  }
 }
 
 async function handleCreateVehicle(e) {

@@ -47,7 +47,7 @@ function buildWelcomeEmailHtml({
   <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
   <body style="margin:0;padding:24px;background:#f1f5f9;font-family:Arial,sans-serif;color:#1e293b">
     <main style="max-width:600px;margin:auto;background:#fff;padding:32px;border-radius:12px">
-      <h1>🚗 AutoTrack - Almotores</h1>
+      <h1>🚗 AutoTrack</h1>
       <h2>¡Hola ${escapeHtml(client_name)}!</h2>
       <p>Se ha registrado tu vehículo <strong>${escapeHtml(brand_model)}</strong>.</p>
       <p>Orden de pedido: <strong>${escapeHtml(order_code)}</strong></p>
@@ -70,7 +70,7 @@ function buildStatusEmailHtml({ client_name, vehicle, portal_url }) {
   <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
   <body style="margin:0;padding:24px;background:#f1f5f9;font-family:Arial,sans-serif;color:#1e293b">
     <main style="max-width:600px;margin:auto;background:#fff;padding:32px;border-radius:12px">
-      <h1 style="color:#2563eb">🚗 AutoTrack - Almotores</h1>
+      <h1 style="color:#2563eb">🚗 AutoTrack</h1>
       <h2>Hola ${escapeHtml(client_name)}</h2>
       <p>Te informamos sobre el estado actual de tu vehículo.</p>
       <p><strong>Vehículo:</strong> ${escapeHtml(vehicle.brand_model)}</p>

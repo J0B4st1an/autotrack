@@ -411,22 +411,30 @@ app.put('/api/vehicles/:id', async (req, res) => {
 });
 
 app.post('/api/vehicles', async (req, res) => {
-  const { client_doc, client_name, brand_model } = req.body;
+  try {
+    const { client_doc, client_name, brand_model } = req.body;
 
-  if (!client_doc || !client_name || !brand_model) {
-    return res.status(400).json({
+    if (!client_doc || !client_name || !brand_model) {
+      return res.status(400).json({
+        success: false,
+        message: 'Campos requeridos faltantes (Cédula, Nombre o Modelo).'
+      });
+    }
+
+    const result = await db.createVehicle(req.body);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Vehículo registrado correctamente.',
+      vehicle: result.vehicle
+    });
+  } catch (err) {
+    console.error('[ERROR CREAR VEHÍCULO]', err.message);
+    return res.status(500).json({
       success: false,
-      message: 'Campos requeridos faltantes.'
+      message: err.message || 'Error interno al registrar el vehículo.'
     });
   }
-
-  const result = await db.createVehicle(req.body);
-
-  return res.status(201).json({
-    success: true,
-    message: 'Vehículo registrado correctamente.',
-    vehicle: result.vehicle
-  });
 });
 
 app.patch('/api/vehicles/:id/status', async (req, res) => {

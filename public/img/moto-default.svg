@@ -56,5 +56,5 @@
     <!-- Headlight -->
     <polygon points="350,85 365,95 352,105" fill="#fef08a"/>
   </g>
-  <text x="300" y="315" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="13" fill="#64748b" letter-spacing="1">MOTOCICLETA • ALMOTORES</text>
+  <text x="300" y="315" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="13" fill="#64748b" letter-spacing="1">MOTOCICLETA • AUTOTRACK</text>
 </svg>

@@ -147,7 +147,7 @@ function renderTimeline(v, stages) {
   container.innerHTML = '';
 
   const grid = document.createElement('div');
-  grid.className = 'grid grid-cols-1 md:grid-cols-7 gap-4 relative';
+  grid.className = 'timeline-grid grid grid-cols-1 md:grid-cols-7 gap-2.5 relative';
 
   stages.forEach((s) => {
     const isCompleted = s.index < v.current_stage_index;
@@ -157,20 +157,20 @@ function renderTimeline(v, stages) {
     const histDate = histMatch ? formatDateShort(histMatch.date) : '';
 
     const stepNode = document.createElement('div');
-    stepNode.className = `timeline-step flex md:flex-col items-center gap-3 p-3 rounded-2xl border ${
-      isActive ? 'bg-blue-50/70 border-blue-200 active' : 
-      isCompleted ? 'bg-emerald-50/40 border-emerald-100 completed' : 'bg-slate-50 border-slate-100 text-slate-400'
+    stepNode.className = `timeline-step flex md:flex-col items-center gap-2 p-2.5 rounded-2xl border transition ${
+      isActive ? 'bg-blue-50/70 border-blue-400/50 active shadow-lg shadow-blue-500/10' : 
+      isCompleted ? 'bg-emerald-50/40 border-emerald-400/40 completed' : 'bg-slate-50 border-white/10 text-slate-400'
     }`;
 
     stepNode.innerHTML = `
-      <div class="step-circle">
-        ${isCompleted ? '<i class="fa-solid fa-check"></i>' : s.index}
+      <div class="step-circle flex-shrink-0">
+        ${isCompleted ? '<i class="fa-solid fa-check text-xs"></i>' : `<span class="text-xs font-black">${s.index}</span>`}
       </div>
-      <div class="md:text-center flex-1">
-        <p class="text-xs font-bold ${isActive ? 'text-blue-900' : isCompleted ? 'text-emerald-900' : 'text-slate-500'}">
+      <div class="timeline-content md:text-center flex-1 min-w-0">
+        <p class="timeline-title text-[11px] font-extrabold tracking-tight ${isActive ? 'text-blue-300' : isCompleted ? 'text-emerald-300' : 'text-slate-300'}">
           ${s.name}
         </p>
-        <p class="text-[10px] text-slate-400 mt-0.5">${histDate || (isActive ? 'En proceso' : 'Pendiente')}</p>
+        <p class="timeline-date text-[10px] text-slate-400 mt-1">${histDate || (isActive ? 'En proceso' : 'Pendiente')}</p>
       </div>
     `;
 

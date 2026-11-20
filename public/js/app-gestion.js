@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!checkAdminSession()) return;
   await fetchStages();
   await loadManagementData();
+  setupGestionClientAutofill();
 });
 
 function checkAdminSession() {
@@ -83,6 +84,7 @@ async function loadManagementData() {
     renderUsersTable(allUsers);
     updateBadgesAndStats();
     populateVehicleSelect();
+    updateGestionClientDatalists();
 
   } catch (err) {
     console.error("Error al cargar datos de gestión:", err);
@@ -131,71 +133,73 @@ function renderVehiclesGrid(vehicles) {
     const imgSrc = v.image_url || defaultImg;
 
     const card = document.createElement('div');
-    card.className = "bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition group";
+    card.className = "cardd rounded-3xl border border-white/10 shadow-xl overflow-hidden flex flex-col hover:border-blue-400/30 transition group";
 
     card.innerHTML = `
       <!-- Foto del Vehículo -->
-      <div class="relative h-44 bg-slate-900 overflow-hidden flex items-center justify-center">
-        <img src="${imgSrc}" alt="${v.brand_model}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='${defaultImg}'">
+      <div style="position: relative; height: 180px; width: 100%; background: #081020; overflow: hidden; border-radius: 1.25rem 1.25rem 0 0; display: block;">
+        <img src="${imgSrc}" alt="${escapeHtml(v.brand_model)}" style="width: 100%; height: 100%; object-fit: contain; padding: 12px; display: block;" onerror="this.src='${defaultImg}'">
         
-        <div class="absolute top-3 left-3 flex items-center gap-1.5">
-          <span class="px-2.5 py-1 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold rounded-lg border border-white/10 uppercase tracking-wide">
-            ${v.vehicle_type || 'Automóvil'}
+        <!-- Badges Superiores (Esquina Superior Izquierda) -->
+        <div style="position: absolute; top: 10px; left: 10px; z-index: 10; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; max-width: 65%;">
+          <span style="padding: 3px 8px; background: rgba(0,0,0,0.85); color: #fff; font-size: 10px; font-weight: 700; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); text-transform: uppercase;">
+            ${escapeHtml(v.vehicle_type || 'Automóvil')}
           </span>
-          <span class="px-2.5 py-1 bg-blue-600/90 backdrop-blur-md text-white text-[10px] font-mono font-bold rounded-lg shadow-sm">
-            ${v.order_code}
+          <span style="padding: 3px 8px; background: rgba(37,99,235,0.9); color: #fff; font-size: 10px; font-family: monospace; font-weight: 700; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">
+            ${escapeHtml(v.order_code)}
           </span>
         </div>
 
-        <div class="absolute top-3 right-3">
-          <span class="px-2.5 py-1 bg-emerald-500/90 text-white text-[10px] font-bold rounded-lg shadow-sm flex items-center gap-1">
-            <i class="fa-solid fa-circle-check text-[9px]"></i>
-            ${v.current_stage_name}
+        <!-- Badge de Etapa (Esquina Inferior Derecha - Separado totalmente) -->
+        <div style="position: absolute; bottom: 10px; right: 10px; z-index: 10; max-width: 80%;">
+          <span style="padding: 4px 10px; background: rgba(5,150,105,0.92); color: #fff; font-size: 10px; font-weight: 700; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-circle-check" style="font-size: 9px;"></i>
+            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(v.current_stage_name)}</span>
           </span>
         </div>
       </div>
 
       <!-- Contenido de la Tarjeta -->
-      <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+      <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3.5">
         <div>
-          <h3 class="text-base font-extrabold text-slate-900 leading-snug">${v.brand_model}</h3>
-          <p class="text-xs text-slate-500 mt-1 flex items-center gap-2">
-            <span>Color: <strong class="text-slate-700">${v.color || 'Blanco'}</strong></span>
+          <h3 class="text-sm sm:text-base font-extrabold text-white leading-snug">${escapeHtml(v.brand_model)}</h3>
+          <p class="text-xs text-slate-300 mt-1 flex items-center gap-2 flex-wrap">
+            <span>Color: <strong class="text-slate-100">${escapeHtml(v.color || 'Blanco')}</strong></span>
             <span>•</span>
-            <span class="font-mono text-[11px]">VIN: ${v.vin}</span>
+            <span class="font-mono text-[11px] text-slate-300">VIN: ${escapeHtml(v.vin)}</span>
           </p>
         </div>
 
         <!-- Ficha del Cliente -->
-        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 text-xs space-y-1">
+        <div class="bg-white/5 p-3 rounded-2xl border border-white/10 text-xs space-y-1">
           <div class="flex items-center justify-between">
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Cliente Asignado</span>
-            <span class="text-[10px] font-mono text-indigo-600 font-bold">C.C. ${v.client_doc}</span>
+            <span class="text-[10px] font-mono text-blue-300 font-bold">C.C. ${escapeHtml(v.client_doc)}</span>
           </div>
-          <p class="font-bold text-slate-800">${v.client_name}</p>
-          <p class="text-[11px] text-slate-500 font-mono">${v.client_email || 'Sin correo'}</p>
+          <p class="font-bold text-slate-100">${escapeHtml(v.client_name)}</p>
+          <p class="text-[11px] text-slate-400 font-mono">${escapeHtml(v.client_email || 'Sin correo')}</p>
         </div>
 
         <!-- Metadatos de Entrega -->
-        <div class="text-[11px] text-slate-500 space-y-1 border-t border-slate-100 pt-3">
+        <div class="text-[11px] text-slate-300 space-y-1 border-t border-white/10 pt-2.5">
           <p class="flex items-center justify-between">
-            <span>Asesor:</span>
-            <strong class="text-slate-700">${v.advisor_name || 'Laura Gómez'}</strong>
+            <span class="text-slate-400">Asesor:</span>
+            <strong class="text-slate-200">${escapeHtml(v.advisor_name || 'Laura Gómez')}</strong>
           </p>
           <p class="flex items-center justify-between">
-            <span>Sede:</span>
-            <span class="text-slate-600">${v.dealership_branch || 'Almotores Principal'}</span>
+            <span class="text-slate-400">Sede:</span>
+            <span class="text-slate-200">${escapeHtml(v.dealership_branch || 'Sede Principal')}</span>
           </p>
         </div>
 
         <!-- Acciones -->
-        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-          <a href="/admin.html" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+        <div class="flex items-center justify-between pt-2 border-t border-white/10">
+          <a href="/admin.html" class="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1">
             <span>Ver en Línea de Tiempo</span>
             <i class="fa-solid fa-arrow-right text-[10px]"></i>
           </a>
 
-          <button onclick="handleDeleteVehicle('${v.id}')" class="text-rose-600 hover:text-rose-800 p-1.5 rounded-lg hover:bg-rose-50 transition" title="Eliminar vehículo">
+          <button onclick="handleDeleteVehicle('${escapeHtml(v.id)}')" class="text-rose-400 hover:text-rose-300 p-1.5 rounded-lg hover:bg-rose-500/10 transition" title="Eliminar vehículo">
             <i class="fa-solid fa-trash-can text-xs"></i>
           </button>
         </div>
@@ -227,16 +231,119 @@ function filterVehiclesList() {
   renderVehiclesGrid(filtered);
 }
 
+// ===== AUTOCOMPLETADO INTELIGENTE DE CLIENTES (GESTIÓN) =====
+function getKnownClientsGestion() {
+  const map = new Map();
+  (allVehicles || []).forEach(v => {
+    const doc = String(v.client_doc || '').trim();
+    if (doc && !map.has(doc)) {
+      map.set(doc, {
+        doc,
+        name: String(v.client_name || '').trim(),
+        email: String(v.client_email || '').trim(),
+        phone: String(v.client_phone || '').trim()
+      });
+    }
+  });
+  (allUsers || []).forEach(u => {
+    const doc = String(u.client_doc || '').trim();
+    if (doc && !map.has(doc)) {
+      map.set(doc, {
+        doc,
+        name: String(u.client_name || u.username || '').trim(),
+        email: String(u.email || '').trim(),
+        phone: ''
+      });
+    }
+  });
+  return Array.from(map.values());
+}
+
+function updateGestionClientDatalists() {
+  const clients = getKnownClientsGestion();
+  const docList = document.getElementById('gestion-clients-doc-list');
+  const nameList = document.getElementById('gestion-clients-name-list');
+
+  if (docList) {
+    docList.innerHTML = clients
+      .map(c => `<option value="${escapeHtml(c.doc)}">${escapeHtml(c.name)}</option>`)
+      .join('');
+  }
+  if (nameList) {
+    nameList.innerHTML = clients
+      .map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.doc)}</option>`)
+      .join('');
+  }
+}
+
+function setupGestionClientAutofill() {
+  const docInput = document.getElementById('veh-client-doc');
+  const nameInput = document.getElementById('veh-client-name');
+  if (!docInput || !nameInput) return;
+
+  const handleMatch = (query, isDoc = true) => {
+    const q = String(query || '').trim().toLowerCase();
+    if (!q || q.length < 3) return;
+
+    const clients = getKnownClientsGestion();
+    const found = clients.find(c =>
+      isDoc ? c.doc.toLowerCase() === q : c.name.toLowerCase() === q
+    );
+
+    if (found) {
+      document.getElementById('veh-client-doc').value = found.doc;
+      document.getElementById('veh-client-name').value = found.name;
+      if (found.email) document.getElementById('veh-client-email').value = found.email;
+      if (found.phone) document.getElementById('veh-client-phone').value = found.phone;
+
+      const infoBox = document.getElementById('gestion-client-autofill-info');
+      const infoText = document.getElementById('gestion-client-autofill-text');
+      if (infoBox && infoText) {
+        infoText.textContent = `Cliente existente vinculado: ${found.name} (${found.doc})`;
+        infoBox.classList.remove('hidden');
+      }
+    }
+  };
+
+  docInput.addEventListener('input', (e) => handleMatch(e.target.value, true));
+  docInput.addEventListener('change', (e) => handleMatch(e.target.value, true));
+  nameInput.addEventListener('change', (e) => handleMatch(e.target.value, false));
+}
+
+function clearGestionClientAutofill() {
+  document.getElementById('veh-client-doc').value = '';
+  document.getElementById('veh-client-name').value = '';
+  document.getElementById('veh-client-email').value = '';
+  document.getElementById('veh-client-phone').value = '';
+  document.getElementById('gestion-client-autofill-info')?.classList.add('hidden');
+  document.getElementById('veh-client-doc').focus();
+}
+
 function openCreateVehicleModal() {
   selectedImageFile = null;
-  document.getElementById('form-create-vehicle').reset();
+  document.getElementById('form-create-vehicle')?.reset();
   updateDefaultImage('Automóvil');
-  document.getElementById('preview-badge').textContent = 'Por defecto';
-  document.getElementById('modal-vehicle').classList.remove('hidden');
+  const badge = document.getElementById('preview-badge');
+  if (badge) badge.textContent = 'Por defecto';
+  document.getElementById('gestion-client-autofill-info')?.classList.add('hidden');
+  try {
+    updateGestionClientDatalists();
+  } catch (err) {
+    console.warn('Error al actualizar lista de clientes gestión:', err);
+  }
+  const m = document.getElementById('modal-vehicle');
+  if (m) {
+    m.classList.remove('hidden');
+    m.style.display = 'flex';
+  }
 }
 
 function closeCreateVehicleModal() {
-  document.getElementById('modal-vehicle').classList.add('hidden');
+  const m = document.getElementById('modal-vehicle');
+  if (m) {
+    m.classList.add('hidden');
+    m.style.display = 'none';
+  }
 }
 
 function updateDefaultImage(type) {
@@ -294,7 +401,7 @@ async function handleSaveVehicle(e) {
       color: document.getElementById('veh-color').value.trim() || 'Blanco Glaciar',
       vin: document.getElementById('veh-vin').value.trim() || undefined,
       order_code: document.getElementById('veh-order').value.trim() || undefined,
-      dealership_branch: document.getElementById('veh-branch').value.trim() || 'Almotores Principal',
+      dealership_branch: document.getElementById('veh-branch').value.trim() || 'Sede Principal Norte',
       advisor_name: document.getElementById('veh-advisor').value.trim() || 'Laura Gómez',
       client_name: document.getElementById('veh-client-name').value.trim(),
       client_doc: document.getElementById('veh-client-doc').value.trim(),
@@ -456,12 +563,20 @@ function filterUsersList() {
 
 function openCreateUserModal() {
   document.getElementById('form-create-user').reset();
-  document.getElementById('usr-password').value = 'Almotores2024*';
-  document.getElementById('modal-user').classList.remove('hidden');
+  document.getElementById('usr-password').value = 'AutoTrack2024*';
+  const m = document.getElementById('modal-user');
+  if (m) {
+    m.classList.remove('hidden');
+    m.style.display = 'flex';
+  }
 }
 
 function closeCreateUserModal() {
-  document.getElementById('modal-user').classList.add('hidden');
+  const m = document.getElementById('modal-user');
+  if (m) {
+    m.classList.add('hidden');
+    m.style.display = 'none';
+  }
 }
 
 async function handleSaveUser(e) {
@@ -543,4 +658,14 @@ function showToast(text) {
 function closeToast() {
   const toast = document.getElementById('toast-msg');
   if (toast) toast.classList.add('hidden');
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[char]);
 }
