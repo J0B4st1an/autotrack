@@ -165,11 +165,25 @@ async function ensureUserPasswordColumn() {
   // La columna se crea mediante migration.sql, no desde cada petición.
 }
 const db = {
+
+  getVehicleByCode: getVehicleByCode,
   getStages: () => STAGES,
-  getAllVehicles: async () => {
-    const r = await pool.query(`${VEHICLE_SELECT} ORDER BY v.id_vehiculo`);
-    return Promise.all(r.rows.map(vehicleByRow));
-  },
+
+
+
+
+  
+getAllVehicles: async () => {
+  const r = await pool.query(
+    `${VEHICLE_SELECT}
+     WHERE v.activo = TRUE
+     ORDER BY v.id_vehiculo`
+  );
+  return Promise.all(r.rows.map(vehicleByRow));
+},
+
+
+
   getVehicleById: getVehicleByCode,
   searchVehicle: async query => {
     if (!query) return null;
@@ -181,50 +195,100 @@ const db = {
   },
   getUserVehicle: getVehicleByCode,
 
+
 createVehicle: async data => {
   const client = await pool.connect();
   let createdUser = null;
-  let vehicleCode;
+  let vehicleCode = null;
+  let vehicleId = null;
 
   try {
     await client.query('BEGIN');
 
-    const doc = String(data.client_doc || data.documento || '').trim();
+    // 1. Validar y normalizar los datos del cliente.
+    const doc = String(
+      data.client_doc || data.documento || ''
+    ).trim();
+
     if (!doc) {
       throw new Error('El documento del cliente es obligatorio.');
     }
 
     const clientEmail = String(
-      data.client_email || data.email || `${doc}@autotrack.local`
+      data.client_email || data.email || ''
     ).trim().toLowerCase();
 
-    const parts = splitName(
-      data.client_name || `${data.nombre || ''} ${data.apellido || ''}`
-    );
+    const clientName = String(
+      data.client_name ||
+      `${data.nombre || ''} ${data.apellido || ''}`
+    ).trim();
 
-    // Buscar cliente por documento; impedir asociar otro documento al correo.
+    if (!clientName) {
+      throw new Error('El nombre del cliente es obligatorio.');
+    }
+
+    if (!clientEmail || !clientEmail.includes('@')) {
+      throw new Error('Ingresa un correo válido para el cliente.');
+    }
+
+    const parts = splitName(clientName);
+
+    // 2. Buscar el cliente por documento.
     let result = await client.query(
       `SELECT id_cliente, documento, correo
        FROM public.clientes
        WHERE documento = $1
-       LIMIT 1`,
+       LIMIT 1
+       FOR UPDATE`,
       [doc]
     );
 
     let clientId;
 
     if (result.rowCount) {
-      clientId = result.rows[0].id_cliente;
+      // El cliente ya existe: reutilizarlo.
+      const existingClient = result.rows[0];
+      clientId = existingClient.id_cliente;
+
+      // No permitir que el correo pertenezca a otra persona.
+      const emailOwner = await client.query(
+        `SELECT id_cliente
+         FROM public.clientes
+         WHERE lower(correo) = lower($1)
+           AND id_cliente <> $2
+         LIMIT 1`,
+        [clientEmail, clientId]
+      );
+
+      if (emailOwner.rowCount) {
+        throw new Error(
+          'Ese correo pertenece a otro cliente. Verifica el documento o el correo.'
+        );
+      }
+
+      // Actualizar los datos de contacto del mismo cliente.
+      await client.query(
+        `UPDATE public.clientes
+         SET correo = $1,
+             telefono = COALESCE($2, telefono)
+         WHERE id_cliente = $3`,
+        [
+          clientEmail,
+          data.client_phone || data.telefono || null,
+          clientId
+        ]
+      );
     } else {
-      result = await client.query(
-        `SELECT id_cliente, documento
+      // Si no existe el documento, verificar que el correo esté disponible.
+      const emailOwner = await client.query(
+        `SELECT id_cliente
          FROM public.clientes
          WHERE lower(correo) = lower($1)
          LIMIT 1`,
         [clientEmail]
       );
 
-      if (result.rowCount) {
+      if (emailOwner.rowCount) {
         throw new Error(
           'Ese correo ya está asociado a otro cliente. Verifica los datos.'
         );
@@ -247,61 +311,43 @@ createVehicle: async data => {
       clientId = result.rows[0].id_cliente;
     }
 
-    // Resolver asesor dentro de la misma transacción.
+    // 3. Resolver el asesor existente.
     const advisorEmail = String(
       data.advisor_email ||
       data.asesor_correo ||
-      'laura.prueba@example.com'
-    ).toLowerCase();
+      ''
+    ).trim().toLowerCase();
 
-    result = await client.query(
-      `SELECT id_asesor
-       FROM public.asesores
-       WHERE lower(correo) = lower($1)
-       LIMIT 1`,
-      [advisorEmail]
-    );
+    result = advisorEmail
+      ? await client.query(
+          `SELECT id_asesor
+           FROM public.asesores
+           WHERE lower(correo) = lower($1)
+             AND activo = TRUE
+           LIMIT 1`,
+          [advisorEmail]
+        )
+      : { rowCount: 0, rows: [] };
 
     if (!result.rowCount) {
       result = await client.query(
         `SELECT id_asesor
          FROM public.asesores
-         WHERE activo = true
+         WHERE activo = TRUE
          ORDER BY id_asesor
          LIMIT 1`
       );
     }
 
-    let advisorId;
-
-    if (result.rowCount) {
-      advisorId = result.rows[0].id_asesor;
-    } else {
-      const advisorParts = splitName(
-        data.advisor_name || 'Asesor AutoTrack'
+    if (!result.rowCount) {
+      throw new Error(
+        'No hay asesores activos disponibles para asignar el vehículo.'
       );
-
-      const newAdvisorEmail =
-        advisorEmail === 'laura.prueba@example.com'
-          ? `asesor${Date.now()}@autotrack.local`
-          : advisorEmail;
-
-      result = await client.query(
-        `INSERT INTO public.asesores
-           (nombre, apellido, correo, telefono, activo)
-         VALUES ($1, $2, $3, $4, true)
-         RETURNING id_asesor`,
-        [
-          advisorParts.nombre,
-          advisorParts.apellido,
-          newAdvisorEmail,
-          data.advisor_phone || null
-        ]
-      );
-
-      advisorId = result.rows[0].id_asesor;
     }
 
+    const advisorId = result.rows[0].id_asesor;
+
+    // 4. Validar la fase del vehículo.
     const currentIndex = Number(data.current_stage_index || 1);
 
     const phase = await client.query(
@@ -315,6 +361,7 @@ createVehicle: async data => {
       throw new Error('La fase indicada no existe.');
     }
 
+    // 5. Generar los datos del vehículo.
     const count = await client.query(
       `SELECT COALESCE(MAX(id_vehiculo), 0) + 1 AS n
        FROM public.vehiculos`
@@ -323,11 +370,14 @@ createVehicle: async data => {
     const n = Number(count.rows[0].n);
     vehicleCode = data.id || `VEH-${1000 + n}`;
 
-    const vehicleParts = String(data.brand_model || '')
-      .trim()
-      .split(/\s+/);
+    const vehicleParts = String(
+      data.brand_model || ''
+    ).trim().split(/\s+/);
 
-    const marca = data.marca || vehicleParts.shift() || 'Sin marca';
+    const marca = data.marca ||
+      vehicleParts.shift() ||
+      'Sin marca';
+
     const modelo = data.modelo ||
       vehicleParts.join(' ') ||
       String(data.brand_model || 'Sin modelo');
@@ -343,17 +393,17 @@ createVehicle: async data => {
     const vin = data.vin ||
       `VIN-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-    // Crear vehículo.
+    // 6. Crear el vehículo como activo.
     const inserted = await client.query(
       `INSERT INTO public.vehiculos
         (codigo_vehiculo, codigo_orden, vin, placa, marca, modelo,
          anio, id_cliente, id_asesor, id_fase_actual, fecha_ingreso,
          fecha_estimada_entrega, observaciones, tipo_vehiculo, color,
          sede, telefono_asesor, imagen_url, dias_estimados_entrega,
-         fecha_actualizacion)
+         fecha_actualizacion, activo)
        VALUES
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,CURRENT_DATE,
-         $11,$12,$13,$14,$15,$16,$17,$18,CURRENT_TIMESTAMP)
+         $11,$12,$13,$14,$15,$16,$17,$18,CURRENT_TIMESTAMP,TRUE)
        RETURNING id_vehiculo`,
       [
         vehicleCode,
@@ -366,7 +416,9 @@ createVehicle: async data => {
         clientId,
         advisorId,
         phase.rows[0].id_fase,
-        data.estimated_delivery_date || data.fecha_estimada_entrega || null,
+        data.estimated_delivery_date ||
+          data.fecha_estimada_entrega ||
+          null,
         data.observaciones || null,
         data.vehicle_type || 'Automóvil',
         data.color || null,
@@ -377,9 +429,9 @@ createVehicle: async data => {
       ]
     );
 
-    const id = inserted.rows[0].id_vehiculo;
+    vehicleId = inserted.rows[0].id_vehiculo;
 
-    // Crear checklist.
+    // 7. Crear las tareas del checklist.
     for (const [i, item] of (data.checklist || []).entries()) {
       await client.query(
         `INSERT INTO public.checklist_vehiculos
@@ -387,7 +439,7 @@ createVehicle: async data => {
          VALUES ($1, $2, $3, $4, $5)
          ON CONFLICT DO NOTHING`,
         [
-          id,
+          vehicleId,
           item.code || item.codigo_tarea || `TAREA-${i + 1}`,
           item.title || item.titulo || 'Tarea',
           item.category || item.categoria || null,
@@ -396,28 +448,50 @@ createVehicle: async data => {
       );
     }
 
-    // Crear una cuenta solo si el cliente aún no tiene una.
-    if (
-      data.create_client_user !== false &&
-      data.client_name &&
-      data.client_doc
-    ) {
+    // 8. Buscar una cuenta existente para este cliente.
+    if (data.create_client_user !== false) {
       const account = await client.query(
-        `SELECT id_usuario
+        `SELECT id_usuario, correo
          FROM public.usuarios
-         WHERE id_cliente = $1 AND rol = 'cliente'
+         WHERE id_cliente = $1
+           AND rol = 'cliente'
          LIMIT 1`,
         [clientId]
       );
 
       if (!account.rowCount) {
-        const raw = String(data.client_name)
-          .trim()
-          .toLowerCase()
-          .split(/\s+/);
+        // Comprobar que el correo no esté asignado a otra cuenta.
+        const accountEmail = await client.query(
+          `SELECT id_usuario, id_cliente
+           FROM public.usuarios
+           WHERE lower(correo) = lower($1)
+           LIMIT 1`,
+          [clientEmail]
+        );
+
+        if (accountEmail.rowCount) {
+          const owner = accountEmail.rows[0].id_cliente;
+
+          if (
+            owner !== null &&
+            Number(owner) !== Number(clientId)
+          ) {
+            throw new Error(
+              'Ese correo ya pertenece a otra cuenta. Verifica el correo.'
+            );
+          }
+
+          throw new Error(
+            'Ese correo ya tiene una cuenta de usuario. Verifica los datos antes de continuar.'
+          );
+        }
+
+        const raw = clientName.toLowerCase().split(/\s+/);
 
         const baseUsername =
           `${raw[0] || 'cliente'}.${raw[raw.length - 1] || 'usuario'}`
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
             .replace(/[^a-z0-9.]/g, '');
 
         let username = baseUsername;
@@ -427,61 +501,41 @@ createVehicle: async data => {
           const usernameCheck = await client.query(
             `SELECT 1
              FROM public.usuarios
-             WHERE lower(nombre_usuario) = lower($1)`,
+             WHERE lower(nombre_usuario) = lower($1)
+             LIMIT 1`,
             [username]
           );
 
           if (!usernameCheck.rowCount) break;
+
           username = `${baseUsername}.${suffix++}`;
         }
 
-        const email = String(
-          data.client_email || `${username}@email.com`
-        ).trim().toLowerCase();
+        const tempPassword =
+          `Temp${crypto.randomInt(1000, 9999)}!`;
 
-        const emailCheck = await client.query(
-          `SELECT id_usuario, id_cliente
-           FROM public.usuarios
-           WHERE lower(correo) = lower($1)
-           LIMIT 1`,
-          [email]
+        const hash = await hashPassword(tempPassword);
+
+        const userResult = await client.query(
+          `INSERT INTO public.usuarios
+             (nombre_usuario, correo, password_hash, rol, activo,
+              id_cliente, id_asesor, debe_cambiar_password)
+           VALUES ($1, $2, $3, 'cliente', TRUE, $4, NULL, TRUE)
+           RETURNING id_usuario`,
+          [username, clientEmail, hash, clientId]
         );
 
-        if (emailCheck.rowCount) {
-          if (Number(emailCheck.rows[0].id_cliente) !== Number(clientId)) {
-            throw new Error(
-              'Ese correo ya pertenece a otra cuenta. Verifica el correo.'
-            );
-          }
-
-          // La cuenta ya existe para este cliente: no duplicarla.
-        } else {
-          const tempPassword =
-            `Temp${crypto.randomInt(1000, 9999)}!`;
-
-          const hash = await hashPassword(tempPassword);
-
-          const userResult = await client.query(
-            `INSERT INTO public.usuarios
-               (nombre_usuario, correo, password_hash, rol, activo,
-                id_cliente, id_asesor, debe_cambiar_password)
-             VALUES ($1, $2, $3, 'cliente', true, $4, NULL, true)
-             RETURNING id_usuario`,
-            [username, email, hash, clientId]
-          );
-
-          createdUser = {
-            id: `USR-${userResult.rows[0].id_usuario}`,
-            username,
-            password: tempPassword,
-            client_doc: doc,
-            client_name: String(data.client_name),
-            email,
-            vehicle_id: vehicleCode,
-            must_change_password: true,
-            role: 'client'
-          };
-        }
+        createdUser = {
+          id: `USR-${userResult.rows[0].id_usuario}`,
+          username,
+          password: tempPassword,
+          client_doc: doc,
+          client_name: clientName,
+          email: clientEmail,
+          vehicle_id: vehicleCode,
+          must_change_password: true,
+          role: 'client'
+        };
       }
     }
 
@@ -493,17 +547,27 @@ createVehicle: async data => {
     client.release();
   }
 
-  // El correo se procesa después de confirmar la transacción.
+  // 9. Enviar el correo después de confirmar la transacción.
   if (createdUser) {
-    emailService.sendWelcomeEmail({
-      user: createdUser,
-      vehicle: await getVehicleByCode(vehicleCode)
-    }).catch(err => {
+    try {
+      const vehicle = await getVehicleByCode(vehicleCode);
+
+      const emailResult = await emailService.sendWelcomeEmail({
+        user: createdUser,
+        vehicle
+      });
+
+      if (!emailResult || !emailResult.success) {
+        console.error(
+          '[AutoTrack] No se confirmó el envío del correo de bienvenida.'
+        );
+      }
+    } catch (err) {
       console.error(
-        'Error al procesar correo de bienvenida:',
+        '[AutoTrack] Error al enviar correo de bienvenida:',
         err.message
       );
-    });
+    }
   }
 
   return {
@@ -511,6 +575,7 @@ createVehicle: async data => {
     createdUser
   };
 },
+
 
   updateStatus: async (code, newIndex, notes, updatedBy = 'Personal Operativo') => {
     const current = await getVehicleByCode(code);
@@ -587,10 +652,33 @@ createVehicle: async data => {
     await pool.query('DELETE FROM public.usuarios WHERE id_usuario=$1',[id]);
     return {success:true,message:'Usuario eliminado correctamente.'};
   },
-  deleteVehicle: async code => {
-    const r = await pool.query('DELETE FROM public.vehiculos WHERE codigo_vehiculo=$1 OR id_vehiculo::text=$1 RETURNING id_vehiculo',[String(code)]);
-    return r.rowCount ? {success:true,message:'Vehículo eliminado correctamente.'} : {success:false,message:'Vehículo no encontrado.'};
-  },
+  
+
+deleteVehicle: async code => {
+  const result = await pool.query(
+    `UPDATE public.vehiculos
+     SET activo = FALSE,
+         fecha_actualizacion = CURRENT_TIMESTAMP
+     WHERE (codigo_vehiculo = $1 OR id_vehiculo::text = $1)
+       AND activo = TRUE
+     RETURNING id_vehiculo`,
+    [String(code)]
+  );
+
+  if (!result.rowCount) {
+    return {
+      success: false,
+      message: 'Vehículo no encontrado o ya retirado.'
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Vehículo retirado correctamente. Su historial se conserva.'
+  };
+},
+
+
   updateVehicle: async (code, data) => {
     const old = await getVehicleByCode(code);
     if (!old) return null;
