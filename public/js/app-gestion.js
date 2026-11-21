@@ -592,7 +592,7 @@ async function handleSaveUser(e) {
       role: document.getElementById('usr-role').value,
       email: document.getElementById('usr-email').value.trim(),
       client_doc: document.getElementById('usr-doc').value.trim() || undefined,
-      password: document.getElementById('usr-password').value.trim() || 'Almotores2024*',
+      password: document.getElementById('usr-password').value.trim() || 'AutoTrack2024*',
       vehicle_id: document.getElementById('usr-vehicle-id').value || null,
       must_change_password: document.getElementById('usr-must-change').checked
     };
@@ -606,7 +606,10 @@ async function handleSaveUser(e) {
     const data = await res.json();
     if (data.success) {
       closeCreateUserModal();
-      showToast(`✅ Usuario @${body.username} creado exitosamente.`);
+      const emailNote = data.emailSent
+        ? ` y credenciales enviadas a ${body.email}.`
+        : '.';
+      showToast(`✅ Usuario @${body.username} creado exitosamente${emailNote}`);
       await loadManagementData();
     } else {
       alert(`❌ Error: ${data.message}`);

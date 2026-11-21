@@ -637,12 +637,30 @@ createVehicle: async data => {
     if (exists.rowCount) return {success:false,message:'El usuario o correo ya existe.'};
     const role = appRole(data.role || 'client');
     let idCliente = null, idAsesor = null;
-    if (role === 'cliente') idCliente = await ensureClient({client_doc:data.client_doc || `DOC-${Date.now()}`,client_name:data.client_name || username,client_email:email});
-    else if (role === 'asesor') idAsesor = await ensureAdvisor({advisor_name:data.client_name || username,advisor_email:email});
-    const hash = await hashPassword(data.password || crypto.randomBytes(12).toString('hex'));
+
+    if (data.vehicle_id) {
+      const vRes = await pool.query('SELECT id_cliente FROM public.vehiculos WHERE codigo_vehiculo=$1 OR id_vehiculo::text=$1 LIMIT 1', [String(data.vehicle_id)]);
+      if (vRes.rows[0]?.id_cliente) {
+        idCliente = vRes.rows[0].id_cliente;
+      }
+    }
+
+    if (role === 'cliente' && !idCliente) {
+      idCliente = await ensureClient({client_doc:data.client_doc || `DOC-${Date.now()}`,client_name:data.client_name || username,client_email:email});
+    } else if (role === 'asesor') {
+      idAsesor = await ensureAdvisor({advisor_name:data.client_name || username,advisor_email:email});
+    }
+
+    const plainPassword = data.password || `AutoTrack${crypto.randomInt(1000, 9999)}*`;
+    const hash = await hashPassword(plainPassword);
     const r = await pool.query(`INSERT INTO public.usuarios(nombre_usuario,correo,password_hash,rol,activo,id_cliente,id_asesor,debe_cambiar_password)
       VALUES($1,$2,$3,$4,true,$5,$6,$7) RETURNING id_usuario`,[username,email,hash,role,idCliente,idAsesor,data.must_change_password !== false]);
-    return {success:true,user:(await db.getAllUsers()).find(u=>u.db_id===r.rows[0].id_usuario)};
+    const newUser = (await db.getAllUsers()).find(u=>u.db_id===r.rows[0].id_usuario);
+    return {
+      success: true,
+      user: newUser,
+      plainPassword
+    };
   },
   deleteUser: async userId => {
     const id = String(userId).match(/-(\d+)$/)?.[1] || userId;

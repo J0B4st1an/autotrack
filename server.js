@@ -351,7 +351,7 @@ app.post('/api/upload-image', (req, res) => {
 // ======================================================
 
 app.post('/api/users', async (req, res) => {
-  const { username, email } = req.body;
+  const { username, email, vehicle_id } = req.body;
 
   if (!username || !email) {
     return res.status(400).json({
@@ -366,10 +366,46 @@ app.post('/api/users', async (req, res) => {
     return res.status(400).json(result);
   }
 
+  const rawPassword = result.plainPassword || req.body.password || 'AutoTrack2024*';
+
+  // Enviar las credenciales al usuario por correo electrónico
+  let emailSent = false;
+  try {
+    let vehicle = null;
+    const vId = vehicle_id || result.user?.vehicle_id;
+    if (vId && typeof db.getVehicleByCode === 'function') {
+      try {
+        vehicle = await db.getVehicleByCode(vId);
+      } catch (ve) {
+        console.warn('[EMAIL USUARIO] No se pudo obtener el vehículo:', ve.message);
+      }
+    }
+
+    const emailRes = await emailService.sendWelcomeEmail({
+      user: {
+        email: result.user.email || email,
+        client_name: result.user.client_name || req.body.client_name || username,
+        username: result.user.username || username,
+        password: rawPassword
+      },
+      vehicle,
+      portalUrl: process.env.PORTAL_URL
+    });
+
+    emailSent = Boolean(emailRes?.success);
+  } catch (err) {
+    console.error(`[AutoTrack] Error al enviar credenciales a ${email}:`, err.message);
+  }
+
+  const emailMsg = emailSent
+    ? ` y credenciales enviadas a ${email}`
+    : '';
+
   return res.status(201).json({
     success: true,
-    message: `Usuario @${result.user.username} creado exitosamente.`,
-    user: result.user
+    message: `Usuario @${result.user.username} creado exitosamente${emailMsg}.`,
+    user: result.user,
+    emailSent
   });
 });
 
